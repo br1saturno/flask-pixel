@@ -16,7 +16,7 @@ def index():
     return render_template('home/index.html', segment='index')
 
 
-@blueprint.route('/<template>')
+@blueprint.route('/landing-freelancer.html')
 @login_required
 def route_template(template):
 
