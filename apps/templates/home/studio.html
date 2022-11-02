@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} About {% endblock %} 
+{% block title %} Studio {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -9,23 +9,30 @@
 
     <main>
         
-        {% include 'includes/preloader.html' %}
+<!--        {% include 'includes/preloader.html' %}-->
 
         <!-- Hero -->
         <section class="section-header bg-secondary">
             <div class="container">
-               <div class="row justify-content-between align-items-center">
-                  <div class="col-12 col-md-7 col-lg-4 text-center text-md-left">
-                      <div class="card border-0 p-2 p-md-3 p-lg-4">
+                <div class="row justify-content-between align-items-center d-flex align-items-stretch">
+                    <div class="col-12 col-md-5 col-lg-8 text-center">
+                        <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
+                            <div>
+                                <img src="" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-7 col-lg-4 text-center text-md-left">
+                        <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
                             <div class="card-header bg-white border-0 text-center">
-                                <h2>Want to work with us?</h2>
-                                <p>Cool! Let’s talk about your project</p>
+                                <h2>Get inspired!</h2>
+                                <p>Select the preferences for your project:</p>
                             </div>
                             <div class="card-body pt-0">
-                                <form action="#">
+                                <form enctype = "multipart/form-data" action="#">
                                     <!-- Form -->
-                                    <div class="btn-group me-2 mb-4">
-                                        <select class="form-select" aria-label="Default select example">
+                                    <div class="mb-4">
+                                        <select class="form-select form-select-sm" aria-label="Style select">
                                             <option selected>Style</option>
                                             <option value="1">Contemporary</option>
                                             <option value="2">Modern</option>
@@ -41,29 +48,76 @@
                                     <!-- End of Form -->
                                     <!-- Form -->
                                     <div class="mb-4">
-                                        <label for="name">Your Name</label>
+                                        <select class="form-select form-select-sm" aria-label="Color feel select">
+                                            <option selected>Color feel</option>
+                                            <option value="1">Earthy</option>
+                                            <option value="2">Coastal</option>
+                                            <option value="3">Classic</option>
+                                            <option value="4">Traditional</option>
+                                            <option value="5">Serene</option>
+                                            <option value="6">Sophisticated</option>
+                                            <option value="7">Ultra-Modern</option>
+                                            <option value="8">Energetic</option>
+                                            <option value="9">Fun</option>
+                                            <option value="10">Eclectic</option>
+                                        </select>
+                                    </div>
+                                    <!-- End of Form -->
+                                    <!-- Form -->
+                                    <div class="mb-4">
+                                        <select class="form-select form-select-sm" aria-label="Type of room select">
+                                            <option selected>Type of room</option>
+                                            <option value="1">Foyer/Entrance Hall</option>
+                                            <option value="2">Kitchen Room</option>
+                                            <option value="3">Family Room</option>
+                                            <option value="4">Dining Room</option>
+                                            <option value="5">Living Room</option>
+                                            <option value="6">Master Bedroom</option>
+                                            <option value="7">Bathroom</option>
+                                            <option value="8">Laundry Room</option>
+                                            <option value="9">Guest Room</option>
+                                            <option value="10">Home Office</option>
+                                            <option value="11">Library</option>
+                                            <option value="12">Kids Bedroom</option>
+                                            <option value="13">Playroom</option>
+                                        </select>
+                                    </div>
+                                    <!-- End of Form -->
+                                    <!-- Form -->
+                                    <div class="mb-4">
+<!--                                        <label for="name">Image Name</label>-->
                                         <div class="input-group">
-                                            <span class="input-group-text" id="basic-addon3"><span class="fas fa-user-circle"></span></span>
-                                            <input type="text" class="form-control" placeholder="e.g. Bonnie Green" id="name" required>
+                                            <span class="input-group-text" id="basic-addon3"><span class="fas fa-camera-retro"></span></span>
+                                            <input type="text" class="form-control form-control-sm" placeholder="Image name" id="name" required>
                                         </div>
                                     </div>
                                     <!-- End of Form -->
                                     <!-- Form -->
                                     <div class="mb-4">
-                                        <label for="email">Your Email</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text" id="basic-addon4"><span class="fas fa-envelope"></span></span>
-                                            <input type="email" class="form-control" placeholder="example@company.com" id="email" required>
+                                        <label for="customRange2" class="form-label">Number of samples</label>
+                                        <input type="range" class="form-range" name="amountRange" min="1" max="4" value="1" id="customRange2" oninput="this.form.amountInput.value=this.value">
+                                        <select class="form-select form-select-sm" name="amountInput" value="1" id="customRange2"
+                                                oninput="this.form.amountRange.value=this.value">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                    </div>
+                                    <!-- End of Form -->
+                                    <!-- Form -->
+                                    <div class="mb-4">
+                                        <label for="baseimage">Select base image:</label>
+                                        <input type="file" id="baseimage" name="inimage">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                                            <label class="form-check-label" for="flexSwitchCheckDefault">Or start from
+                                                scratch</label>
                                         </div>
                                     </div>
                                     <!-- End of Form -->
-                                    <div class="mb-4">
-                                        <label for="message">Your Message</label>
-                                        <textarea placeholder="Your message" class="form-control" id="message" rows="4" required></textarea>
-                                    </div>
-                                    <!-- End of Form -->
                                     <div class="d-grid">
-                                        <button type="submit" class="btn btn-secondary">Send message</button>
+                                        <button type="submit" class="btn btn-secondary">Render</button>
                                     </div>
                                 </form>
                             </div>
@@ -72,7 +126,6 @@
 <!--                        <p class="lead mb-4 text-muted">Themesberg can help you build a modern website, a creative logo or PWA, that will bring you customers and and stay on top of your competition.</p>-->
 <!--                        <a href="./services.html" class="btn btn-tertiary me-3 animate-up-2">What we do <span class="ms-2"><span class="fas fa-arrow-right"></span></span></a>-->
                     </div>
-                  <div class="col-12 col-md-5 d-none d-md-block text-center"><img src="/static/assets/img/illustrations/about-illustration.svg" alt=""></div>
                </div>
             </div>
             <figure class="position-absolute bottom-0 left-0 w-100 d-none d-md-block mb-n2">
