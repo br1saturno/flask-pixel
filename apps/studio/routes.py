@@ -7,7 +7,8 @@ from werkzeug.utils import secure_filename
 from apps.studio.util import stability_generation
 from apps import db
 from apps.studio.models import AImages
-from flask_login import login_required
+from apps.studio.forms import StudioForm
+from apps.authentication.models import Users
 from flask_login import (
     current_user
 )
@@ -16,10 +17,10 @@ from jinja2 import TemplateNotFound
 UPLOAD_FOLDER = './static/images'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
-blueprint.config['SESSION_TYPE'] = 'memcached'
-blueprint.config['SECRET_KEY'] = 'sdlkfj$%^&fhgfghbdfg'
-# sess = Session()
-blueprint.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# blueprint.config['SESSION_TYPE'] = 'memcached'
+# blueprint.config['SECRET_KEY'] = 'sdlkfj$%^&fhgfghbdfg'
+# # sess = Session()
+# blueprint.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def allowed_file(filename):
@@ -27,13 +28,13 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-if current_user.is_authenticated():
-    USERNAME = current_user.username
-
-
 @blueprint.route('/studio', methods=['POST'])
 # @login_required
 def generate_image():
+    username = None
+    if current_user.is_authenticated:
+        username = current_user.get_id()
+    gen_form = StudioForm()
     # Loads the value for the stability ai function
     if request.method == "POST":
         my_prompt = request.form["prompt"]
@@ -56,7 +57,7 @@ def generate_image():
 
         # Generates the new image
         stability_generation(my_prompt, base_image.filename, wanted_samples, image_name, False)
-        session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=USERNAME).all()]
+        session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
         session_id = max(session_id_list)
         variation_params["prompt"] = my_prompt
         return redirect(url_for('result', session_id=session_id))

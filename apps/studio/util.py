@@ -4,6 +4,7 @@ import warnings
 
 from apps import db
 from apps.studio.models import AImages
+from flask_login import login_required
 from flask_login import (
     current_user
 )
@@ -13,9 +14,6 @@ from PIL import Image # image processing
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 
-
-if current_user.is_authenticated():
-    USERNAME = current_user.username
 
 stability_api = client.StabilityInference(key=os.environ['STABILITY_KEY'], verbose=True, )
 
@@ -27,6 +25,9 @@ variation_params = {
 
 def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, var: bool):
     """ The var parameter is False for a new session and True for variations in the same session """
+    username = None
+    if current_user.is_authenticated:
+        username = current_user.get_id()
     base_image = Image.open(f"static/images/{base_image_url}")
     answers = stability_api.generate(
         prompt=my_prompt,
@@ -46,7 +47,7 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
     n = 1 # Image counter for each session
 
     # Loads the session number so it knows which images to load
-    session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=USERNAME).all()]
+    session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
     if not var and len(session_id_list) > 0:
         session_id = max(session_id_list) + 1
     elif var and len(session_id_list) > 0:
