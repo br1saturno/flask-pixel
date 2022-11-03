@@ -31,8 +31,8 @@ if current_user.is_authenticated():
     USERNAME = current_user.username
 
 
-@blueprint.route('/studio', methods=['GET', 'POST'])
-@login_required
+@blueprint.route('/studio', methods=['POST'])
+# @login_required
 def generate_image():
     # Loads the value for the stability ai function
     if request.method == "POST":
