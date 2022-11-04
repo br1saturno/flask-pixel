@@ -51,6 +51,22 @@ def route_template(template):
         return render_template('home/page-500.html'), 500
 
 
+# Helper - Extract current page name from request
+def get_segment(request):
+
+    try:
+
+        segment = request.path.split('/')[-1]
+
+        if segment == '':
+            segment = 'index'
+
+        return segment
+
+    except:
+        return None
+
+
 @blueprint.route('/studio', methods=['POST'])
 @login_required
 def generate_image():
