@@ -9,6 +9,7 @@ from apps import db
 from apps.studio.models import AImages
 from apps.studio.forms import StudioForm
 from apps.authentication.models import Users
+from flask_login import login_required
 from flask_login import (
     current_user
 )
@@ -29,7 +30,7 @@ def allowed_file(filename):
 
 
 @blueprint.route('/studio', methods=['POST'])
-# @login_required
+@login_required
 def generate_image():
     username = None
     if current_user.is_authenticated:
@@ -61,4 +62,4 @@ def generate_image():
         session_id = max(session_id_list)
         variation_params["prompt"] = my_prompt
         return redirect(url_for('result', session_id=session_id))
-    return render_template('studio.html')
+    return render_template('studio.html', form=gen_form)

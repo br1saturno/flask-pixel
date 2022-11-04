@@ -34,5 +34,5 @@ class StudioForm(FlaskForm):
     color_feel = SelectField(u'Color feel', choices=color_feels, id='color_feel', validators=[DataRequired()])
     room_type = SelectField(u'Type of room', choices=room_types, id='room_type', validators=[DataRequired()])
     samples = IntegerRangeField(u'Number of samples')
-    submit = SubmitField(label='Log In')
+    submit = SubmitField(label='Render')
 
