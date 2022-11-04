@@ -62,4 +62,4 @@ def generate_image():
         session_id = max(session_id_list)
         variation_params["prompt"] = my_prompt
         return redirect(url_for('result', session_id=session_id))
-    return render_template('studio.html', form=gen_form)
+    return render_template('home/studio.html', form=gen_form)
