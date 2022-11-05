@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from apps.studio.util import stability_generation
 from apps import db
 from apps.studio.models import AImages
-from apps.studio.forms import StudioForm
+from apps.studio.forms import StudioForm, styles, color_moods, room_types, color_moods_dict
 from apps.studio.util import variation_params
 from apps.authentication.models import Users
 from flask_login import login_required
@@ -19,7 +19,7 @@ from jinja2 import TemplateNotFound
 app = Flask(__name__)
 app.register_blueprint(blueprint)
 
-UPLOAD_FOLDER = '/static/assets/img/bases'
+UPLOAD_FOLDER = 'apps/static/assets/img/bases'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['SESSION_TYPE'] = 'memcached'
@@ -40,14 +40,19 @@ def generate_image():
     if current_user.is_authenticated:
         username = current_user.get_id()
     session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
-    session_id = max(session_id_list)
+    if len(session_id_list) > 0:
+        session_id = max(session_id_list) + 1
+    else:
+        session_id = 1
 
-    # Loads the value for the stability ai function
+    # Loads the values for the stability ai function
+    # TODO Change the color mood for the actual colors
     if request.method == "POST":
         my_prompt = f"A realistic photograph of a {request.form['room']}, {request.form['color_mood']} accent colors," \
-                    f"{request.form['style']} furniture and accesories, 8k, unreal engine, highly detailed," \
-                    f"octane render, sharp, ambient lighting"
+                    f"{request.form['style']} furniture and {request.form['style']} accesories, 8k, unreal engine, " \
+                    f"highly detailed, octane render, sharp, ambient lighting"
         print(my_prompt)
+        print(color_moods_dict)
         image_name = request.form["iname"]
         wanted_samples = int(request.form["amountInput"])
 
@@ -74,4 +79,5 @@ def generate_image():
         variation_params["prompt"] = my_prompt
         # return redirect(url_for('result', session_id=session_id))
     all_images = db.session.query(AImages).filter_by(session_id=session_id).filter_by(username=username).all()
-    return render_template('studio.html', images=all_images, session_id=session_id)
+    return render_template('home/studio.html', images=all_images, session_id=session_id, styles=styles,
+                           moods=color_moods, rooms=room_types)

@@ -14,7 +14,7 @@ styles = [ ("art_nouveau", "Art Nouveau"), ("art_deco", "Art Deco"), ("arts_craf
            ("southwest", "Southwestern"), ("scandi", "Scandinavian"), ("traditional", "Traditional"),
            ("transitional", "Transitional"), ("tropical", "Tropical"), ("tribal", "Tribal"), ]
 
-color_feels = [ ("earthy", "Earthy"), ("coastal", "Coastal"), ("classic", "Classic"), ("traditional", "Traditional"),
+color_moods = [ ("earthy", "Earthy"), ("coastal", "Coastal"), ("classic", "Classic"), ("traditional", "Traditional"),
                ("serene", "Serene"), ("sophisticated", "Sophisticated"), ("ultra_modern", "Ultra-Modern"),
                ("energetic", "Energetic"), ("fun", "Fun"), ("eclectic", "Eclectic"), ]
 
@@ -28,10 +28,16 @@ room_types = [ ("entrance", " Residential - Entrance"), ("living", " Residential
                ("hotel_lobby", " Commercial - Hotel Lobby"), ("hotel_room", " Commercial - Hotel Room"),
                ("hotel_bath", " Commercial - Hotel Bathroom"), ]
 
+colors_combs = [("sage green", "beige", "cream white"), ("blue", "tan", "crisp white"),
+                ("blue and white", "Calming neutrals as supportive colors"), ("burgundy", "deep green", "brown"),
+                ("white", "beige", "light green"), ("gray", "white", "blue"), ("black", "white", "gray"),
+                ("coral", "teal", "beige"), ("pink", "green", "gray"), ("blue", "red", "brown")]
+
+color_moods_dict = {color_moods[n][0]: colors_combs[n] for n in range(len(colors_combs))}
 
 class StudioForm(FlaskForm):
     style = SelectField(u'Style', choices=styles, id='style', validators=[DataRequired()])
-    color_feel = SelectField(u'Color feel', choices=color_feels, id='color_feel', validators=[DataRequired()])
+    color_mood = SelectField(u'Color feel', choices=color_moods, id='color_feel', validators=[DataRequired()])
     room_type = SelectField(u'Type of room', choices=room_types, id='room_type', validators=[DataRequired()])
     samples = IntegerRangeField(u'Number of samples')
     submit = SubmitField(label='Render')

@@ -15,15 +15,6 @@
         <section class="section-header bg-secondary">
             <div class="container">
                 <div class="row justify-content-between align-items-center d-flex align-items-stretch">
-                    <div class="col-12 col-md-5 col-lg-8 text-center">
-                        <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
-                            <div>
-                                {% for image in images: %}
-                                <img src="{{url_for('static',filename=image.gen_image)}}">
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
                     <div class="col-12 col-md-7 col-lg-4 text-center text-md-left">
                         <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
                             <div class="card-header bg-white border-0 text-center">
@@ -31,20 +22,14 @@
                                 <p>Select the preferences for your project:</p>
                             </div>
                             <div class="card-body pt-0">
-                                <form enctype = "multipart/form-data" action="{{ url_for('generate_image') }}" method="POST">
+                                <form enctype = "multipart/form-data" action="{{ url_for('studio_blueprint.generate_image') }}" method="POST">
                                     <!-- Form -->
                                     <div class="mb-4">
                                         <select class="form-select form-select-sm" name="style" aria-label="Style select">
                                             <option selected>Style</option>
-                                            <option value="1">Contemporary</option>
-                                            <option value="2">Modern</option>
-                                            <option value="3">Bohemian</option>
-                                            <option value="4">Eclectic</option>
-                                            <option value="5">Traditional</option>
-                                            <option value="6">Minimalist</option>
-                                            <option value="7">Shabby Chic</option>
-                                            <option value="8">Industrial</option>
-                                            <option value="9">Mediterranean</option>
+                                            {% for style in styles: %}
+                                            <option value="{{ style[0] }}">{{ style[1] }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <!-- End of Form -->
@@ -52,16 +37,9 @@
                                     <div class="mb-4">
                                         <select class="form-select form-select-sm" name="color_mood" aria-label="Color feel select">
                                             <option selected>Color mood</option>
-                                            <option value="1">Earthy</option>
-                                            <option value="2">Coastal</option>
-                                            <option value="3">Classic</option>
-                                            <option value="4">Traditional</option>
-                                            <option value="5">Serene</option>
-                                            <option value="6">Sophisticated</option>
-                                            <option value="7">Ultra-Modern</option>
-                                            <option value="8">Energetic</option>
-                                            <option value="9">Fun</option>
-                                            <option value="10">Eclectic</option>
+                                            {% for mood in moods: %}
+                                            <option value="{{ mood[0] }}">{{ mood[1] }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <!-- End of Form -->
@@ -69,19 +47,9 @@
                                     <div class="mb-4">
                                         <select class="form-select form-select-sm" name="room" aria-label="Type of room select">
                                             <option selected>Type of room</option>
-                                            <option value="1">Foyer/Entrance Hall</option>
-                                            <option value="2">Kitchen Room</option>
-                                            <option value="3">Family Room</option>
-                                            <option value="4">Dining Room</option>
-                                            <option value="5">Living Room</option>
-                                            <option value="6">Master Bedroom</option>
-                                            <option value="7">Bathroom</option>
-                                            <option value="8">Laundry Room</option>
-                                            <option value="9">Guest Room</option>
-                                            <option value="10">Home Office</option>
-                                            <option value="11">Library</option>
-                                            <option value="12">Kids Bedroom</option>
-                                            <option value="13">Playroom</option>
+                                            {% for room in rooms: %}
+                                            <option value="{{ room[0] }}">{{ room[1] }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <!-- End of Form -->
@@ -127,6 +95,15 @@
 <!--                        <h1 class="display-2 mb-4">Full-Service <br class="d-none d-md-inline">Digital Agency</h1>-->
 <!--                        <p class="lead mb-4 text-muted">Themesberg can help you build a modern website, a creative logo or PWA, that will bring you customers and and stay on top of your competition.</p>-->
 <!--                        <a href="./services.html" class="btn btn-tertiary me-3 animate-up-2">What we do <span class="ms-2"><span class="fas fa-arrow-right"></span></span></a>-->
+                    </div>
+                    <div class="col-12 col-md-5 col-lg-8 text-center">
+                        <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
+                            <div>
+                                {% for image in images: %}
+                                <img src="{{url_for('static',filename=image.gen_image)}}">
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                </div>
             </div>

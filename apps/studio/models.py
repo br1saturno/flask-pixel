@@ -2,6 +2,8 @@
 from apps import db
 
 
+# TODO Store every field of the prompt form in the database instead of storing the promp
+
 class AImages(db.Model):
 
     __tablename__ = "user_images"

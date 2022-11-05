@@ -17,6 +17,8 @@ import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 
 stability_api = client.StabilityInference(key=os.environ['STABILITY_KEY'], verbose=True, )
 
+# TODO Include the variations function
+
 variation_params = {
     "prompt": "",
     "session": 0,
@@ -28,7 +30,8 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
     username = None
     if current_user.is_authenticated:
         username = current_user.get_id()
-    base_image = Image.open(f"static/assets/img/bases/{base_image_url}")
+    print(username)
+    base_image = Image.open(f"apps/static/assets/img/bases/{base_image_url}")
     answers = stability_api.generate(
         prompt=my_prompt,
         init_image=base_image,
@@ -72,9 +75,9 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
                 # db.session.add(new_base)
                 # db.session.commit()
                 image_png = f"assets/img/generated/{image_name}{n}.png"
-                img.save(f"static/{image_png}")
+                img.save(f"apps/static/{image_png}")
                 # Saves the image to the database
-                new_image = AImages(session_id=session_id, username=USERNAME, prompt=my_prompt, image_name=image_name,
+                new_image = AImages(session_id=session_id, username=username, prompt=my_prompt, image_name=image_name,
                                     gen_image=image_png, base_image=base_image_url)
                 db.session.add(new_image)
                 db.session.commit()
