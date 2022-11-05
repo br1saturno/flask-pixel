@@ -8,6 +8,7 @@ from apps.studio.util import stability_generation
 from apps import db
 from apps.studio.models import AImages
 from apps.studio.forms import StudioForm
+from apps.studio.util import variation_params
 from apps.authentication.models import Users
 from flask_login import login_required
 from flask_login import (
@@ -15,56 +16,21 @@ from flask_login import (
 )
 from jinja2 import TemplateNotFound
 
-UPLOAD_FOLDER = './static/images'
+app = Flask(__name__)
+app.register_blueprint(blueprint)
+
+UPLOAD_FOLDER = '/static/assets/img/bases'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
-# blueprint.config['SESSION_TYPE'] = 'memcached'
-# blueprint.config['SECRET_KEY'] = 'sdlkfj$%^&fhgfghbdfg'
-# # sess = Session()
-# blueprint.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SESSION_TYPE'] = 'memcached'
+app.config['SECRET_KEY'] = 'sdlkfj$%^&fhgfghbdfg'
+# sess = Session()
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@blueprint.route('/<template>')
-@login_required
-def route_template(template):
-
-    try:
-
-        if not template.endswith('.html'):
-            template += '.html'
-
-        # Detect the current page
-        segment = get_segment(request)
-
-        # Serve the file (if exists) from app/templates/home/FILE.html
-        return render_template("home/" + template, segment=segment)
-
-    except TemplateNotFound:
-        return render_template('home/page-404.html'), 404
-
-    except:
-        return render_template('home/page-500.html'), 500
-
-
-# Helper - Extract current page name from request
-def get_segment(request):
-
-    try:
-
-        segment = request.path.split('/')[-1]
-
-        if segment == '':
-            segment = 'index'
-
-        return segment
-
-    except:
-        return None
 
 
 @blueprint.route('/studio', methods=['POST'])
@@ -73,31 +39,37 @@ def generate_image():
     username = None
     if current_user.is_authenticated:
         username = current_user.get_id()
-    gen_form = StudioForm()
+    session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
+    session_id = max(session_id_list)
+
     # Loads the value for the stability ai function
     if request.method == "POST":
-        my_prompt = request.form["prompt"]
+        my_prompt = f"A realistic photograph of a {request.form['room']}, {request.form['color_mood']} accent colors," \
+                    f"{request.form['style']} furniture and accesories, 8k, unreal engine, highly detailed," \
+                    f"octane render, sharp, ambient lighting"
         image_name = request.form["iname"]
-        wanted_samples = int(request.form["samples"])
+        wanted_samples = int(request.form["amountInput"])
 
         # Uploads the base image
         if 'inimage' not in request.files:
             flash('No file part')
             return redirect(request.url)
-        base_image = request.files['inimage']
+        user_image = request.files['inimage']
+        base_image = user_image.filename
+
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
-        if base_image.filename == '':
+        if base_image == '':
             flash('No selected file')
             return redirect(request.url)
-        if base_image and allowed_file(base_image.filename):
-            filename = secure_filename(base_image.filename)
-            base_image.save(os.path.join(blueprint.config['UPLOAD_FOLDER'], filename))
+        if user_image and allowed_file(user_image.filename):
+            filename = secure_filename(user_image.filename)
+            user_image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         # Generates the new image
-        stability_generation(my_prompt, base_image.filename, wanted_samples, image_name, False)
+        stability_generation(my_prompt, base_image, wanted_samples, image_name, False)
         session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
         session_id = max(session_id_list)
         variation_params["prompt"] = my_prompt
-        return redirect(url_for('result', session_id=session_id))
-    return render_template('home/studio.html', form=gen_form)
+        # return redirect(url_for('result', session_id=session_id))
+    return render_template('studio.html', session_id=session_id)

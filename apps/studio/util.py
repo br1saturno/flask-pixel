@@ -28,7 +28,7 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
     username = None
     if current_user.is_authenticated:
         username = current_user.get_id()
-    base_image = Image.open(f"static/images/{base_image_url}")
+    base_image = Image.open(f"static/assets/img/bases/{base_image_url}")
     answers = stability_api.generate(
         prompt=my_prompt,
         init_image=base_image,
@@ -71,7 +71,7 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
                 # new_base = Base(username="bruno", session_id=session_id, base_image=base_image_url)
                 # db.session.add(new_base)
                 # db.session.commit()
-                image_png = f"images/{image_name}{n}.png"
+                image_png = f"assets/img/generated/{image_name}{n}.png"
                 img.save(f"static/{image_png}")
                 # Saves the image to the database
                 new_image = AImages(session_id=session_id, username=USERNAME, prompt=my_prompt, image_name=image_name,

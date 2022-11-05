@@ -32,7 +32,7 @@
                                 <form enctype = "multipart/form-data" action="#">
                                     <!-- Form -->
                                     <div class="mb-4">
-                                        <select class="form-select form-select-sm" aria-label="Style select">
+                                        <select class="form-select form-select-sm" name="style" aria-label="Style select">
                                             <option selected>Style</option>
                                             <option value="1">Contemporary</option>
                                             <option value="2">Modern</option>
@@ -48,8 +48,8 @@
                                     <!-- End of Form -->
                                     <!-- Form -->
                                     <div class="mb-4">
-                                        <select class="form-select form-select-sm" aria-label="Color feel select">
-                                            <option selected>Color feel</option>
+                                        <select class="form-select form-select-sm" name="color_mood" aria-label="Color feel select">
+                                            <option selected>Color mood</option>
                                             <option value="1">Earthy</option>
                                             <option value="2">Coastal</option>
                                             <option value="3">Classic</option>
@@ -65,7 +65,7 @@
                                     <!-- End of Form -->
                                     <!-- Form -->
                                     <div class="mb-4">
-                                        <select class="form-select form-select-sm" aria-label="Type of room select">
+                                        <select class="form-select form-select-sm" name="room" aria-label="Type of room select">
                                             <option selected>Type of room</option>
                                             <option value="1">Foyer/Entrance Hall</option>
                                             <option value="2">Kitchen Room</option>
@@ -87,8 +87,8 @@
                                     <div class="mb-4">
 <!--                                        <label for="name">Image Name</label>-->
                                         <div class="input-group">
-                                            <span class="input-group-text" id="basic-addon3"><span class="fas fa-camera-retro"></span></span>
-                                            <input type="text" class="form-control form-control-sm" placeholder="Image name" id="name" required>
+                                            <span class="input-group-text" id="basic-addon5"><span class="fas fa-camera-retro"></span></span>
+                                            <input type="text" class="form-control form-control-sm" name="iname" placeholder="Image name" id="image_name" required>
                                         </div>
                                     </div>
                                     <!-- End of Form -->
@@ -96,7 +96,7 @@
                                     <div class="mb-4">
                                         <label for="customRange2" class="form-label">Number of samples</label>
                                         <input type="range" class="form-range" name="amountRange" min="1" max="4" value="1" id="customRange2" oninput="this.form.amountInput.value=this.value">
-                                        <select class="form-select form-select-sm" name="amountInput" value="1" id="customRange2"
+                                        <select class="form-select form-select-sm" name="amountInput" value="1" id="customRange3"
                                                 oninput="this.form.amountRange.value=this.value">
                                             <option value="1">1</option>
                                             <option value="2">2</option>
