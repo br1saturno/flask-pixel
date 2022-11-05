@@ -18,7 +18,9 @@
                     <div class="col-12 col-md-5 col-lg-8 text-center">
                         <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
                             <div>
-                                <img src="" alt="">
+                                {% for image in images: %}
+                                <img src="{{url_for('static',filename=image.gen_image)}}">
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

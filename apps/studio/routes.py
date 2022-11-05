@@ -72,4 +72,5 @@ def generate_image():
         session_id = max(session_id_list)
         variation_params["prompt"] = my_prompt
         # return redirect(url_for('result', session_id=session_id))
-    return render_template('studio.html', session_id=session_id)
+    all_images = db.session.query(AImages).filter_by(session_id=session_id).filter_by(username=username).all()
+    return render_template('studio.html', images=all_images, session_id=session_id)
