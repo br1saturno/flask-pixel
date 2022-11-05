@@ -38,7 +38,8 @@ def allowed_file(filename):
 def generate_image():
     username = None
     if current_user.is_authenticated:
-        username = current_user.get_id()
+        user_id = current_user.get_id()
+        username = Users.query.filter_by(id=user_id).first()
     session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
     if len(session_id_list) > 0:
         session_id = max(session_id_list) + 1

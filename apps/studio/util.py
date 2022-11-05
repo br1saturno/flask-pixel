@@ -1,10 +1,10 @@
 import os
 import io
 import warnings
-
 from apps import db
 from apps.studio.models import AImages
 from flask_login import login_required
+from apps.authentication.models import Users
 from flask_login import (
     current_user
 )
@@ -13,7 +13,6 @@ from PIL import Image # image processing
 
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
-
 
 stability_api = client.StabilityInference(key=os.environ['STABILITY_KEY'], verbose=True, )
 
@@ -29,7 +28,8 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
     """ The var parameter is False for a new session and True for variations in the same session """
     username = None
     if current_user.is_authenticated:
-        username = current_user.get_id()
+        user_id = current_user.get_id()
+        username = Users.query.filter_by(id=user_id).first()
     print(username)
     base_image = Image.open(f"apps/static/assets/img/bases/{base_image_url}")
     answers = stability_api.generate(
