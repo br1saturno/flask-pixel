@@ -9,7 +9,7 @@
 
     <main>
         
-        {% include 'includes/preloader.html' %}
+<!--        {% include 'includes/preloader.html' %}-->
 
         <!-- Hero -->
         <section class="section-header bg-secondary">
@@ -31,7 +31,7 @@
                                 <p>Select the preferences for your project:</p>
                             </div>
                             <div class="card-body pt-0">
-                                <form enctype = "multipart/form-data" action="#">
+                                <form enctype = "multipart/form-data" action="{{ url_for('generate_image') }}" method="POST">
                                     <!-- Form -->
                                     <div class="mb-4">
                                         <select class="form-select form-select-sm" name="style" aria-label="Style select">

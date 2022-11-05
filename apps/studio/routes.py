@@ -33,7 +33,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@blueprint.route('/studio', methods=['POST'])
+@blueprint.route('/studio', methods=['GET', 'POST'])
 @login_required
 def generate_image():
     username = None
@@ -47,6 +47,7 @@ def generate_image():
         my_prompt = f"A realistic photograph of a {request.form['room']}, {request.form['color_mood']} accent colors," \
                     f"{request.form['style']} furniture and accesories, 8k, unreal engine, highly detailed," \
                     f"octane render, sharp, ambient lighting"
+        print(my_prompt)
         image_name = request.form["iname"]
         wanted_samples = int(request.form["amountInput"])
 
