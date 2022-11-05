@@ -39,7 +39,7 @@ def generate_image():
     username = None
     if current_user.is_authenticated:
         user_id = current_user.get_id()
-        username = Users.query.filter_by(id=user_id).first()
+        username = str(Users.query.filter_by(id=user_id).first())
     session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
     if len(session_id_list) > 0:
         session_id = max(session_id_list) + 1
@@ -47,9 +47,14 @@ def generate_image():
         session_id = 1
 
     # Loads the values for the stability ai function
-    # TODO Change the color mood for the actual colors
     if request.method == "POST":
-        my_prompt = f"A realistic photograph of a {request.form['room']}, {request.form['color_mood']} accent colors," \
+        colors = f""
+        for color in color_moods_dict[request.form['color_mood']]:
+            if color is color_moods_dict[request.form['color_mood']][0]:
+                colors = f"{color} accents"
+            else:
+                colors += f", {color} accents"
+        my_prompt = f"A realistic photograph of a {request.form['room']}, {colors}," \
                     f"{request.form['style']} furniture and {request.form['style']} accesories, 8k, unreal engine, " \
                     f"highly detailed, octane render, sharp, ambient lighting"
         print(my_prompt)
