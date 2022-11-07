@@ -18,15 +18,15 @@ color_moods = [ ("earthy", "Earthy"), ("coastal", "Coastal"), ("classic", "Class
                ("serene", "Serene"), ("sophisticated", "Sophisticated"), ("ultra_modern", "Ultra-Modern"),
                ("energetic", "Energetic"), ("fun", "Fun"), ("eclectic", "Eclectic"), ]
 
-room_types = [ ("entrance", " Residential - Entrance"), ("living", " Residential - Living Room"),
-               ("kitchen", " Residential - Kitchen"), ("bedroom", " Residential - Bedroom"),
-               ("bathroom", " Residential - Bathroom"), ("res_office", " Residential - Office"),
-               ("terrace", " Residential - Terrace"), ("hallway", " Residential - Hallway"),
-               ("com_office", " Commercial - Office"), ("coworking", " Commercial - Coworking"),
-               ("coffee_shop", " Commercial - Coffee Shop"), ("store", " Commercial - Store"),
-               ("restaurant", " Commercial - Restaurant"), ("rest_patio", " Commercial - Restaurant Patio"),
-               ("hotel_lobby", " Commercial - Hotel Lobby"), ("hotel_room", " Commercial - Hotel Room"),
-               ("hotel_bath", " Commercial - Hotel Bathroom"), ]
+room_types = [ ("entrance", "Residential - Entrance"), ("living", "Residential - Living Room"),
+               ("kitchen", "Residential - Kitchen"), ("bedroom", "Residential - Bedroom"),
+               ("bathroom", "Residential - Bathroom"), ("res_office", "Residential - Office"),
+               ("terrace", "Residential - Terrace"), ("hallway", "Residential - Hallway"),
+               ("com_office", "Commercial - Office"), ("coworking", "Commercial - Coworking"),
+               ("coffee_shop", "Commercial - Coffee Shop"), ("store", "Commercial - Store"),
+               ("restaurant", "Commercial - Restaurant"), ("rest_patio", "Commercial - Restaurant Patio"),
+               ("hotel_lobby", "Commercial - Hotel Lobby"), ("hotel_room", "Commercial - Hotel Room"),
+               ("hotel_bath", "Commercial - Hotel Bathroom"), ]
 
 colors_combs = [("sage green", "beige", "cream white"), ("blue", "tan", "crisp white"),
                 ("blue and white", "Calming neutrals as supportive colors"), ("burgundy", "deep green", "brown"),

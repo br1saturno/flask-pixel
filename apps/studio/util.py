@@ -22,28 +22,45 @@ variation_params = {
 }
 
 
-def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, var: bool):
+def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, height, width, var: bool, scratch: bool,):
     """ The var parameter is False for a new session and True for variations in the same session """
     username = None
     if current_user.is_authenticated:
         user_id = current_user.get_id()
         username = str(Users.query.filter_by(id=user_id).first())
     print(username)
-    base_image = Image.open(f"apps/static/assets/img/bases/{base_image_url}")
-    answers = stability_api.generate(
-        prompt=my_prompt,
-        init_image=base_image,
-        start_schedule=0.6,
-        # guidance_strength=0.25,
-        # mask_image=base_image,
-        samples=wanted_samples,
-        # height=512,
-        # width=512,
-        # steps=50,
-        # cfg_scale=7.0,
-        # seed=2895508001,
-        # guidance_prompt=my_prompt
-    )
+    if scratch:
+        base_image = None
+        answers = stability_api.generate(
+            prompt=my_prompt,
+            init_image=base_image,
+            start_schedule=0.6,
+            # guidance_strength=0.25,
+            # mask_image=base_image,
+            samples=wanted_samples,
+            height=height,
+            width=width,
+            # steps=50,
+            # cfg_scale=7.0,
+            # seed=2895508001,
+            # guidance_prompt=my_prompt
+        )
+    else:
+        base_image = Image.open(f"apps/static/assets/img/bases/{base_image_url}")
+        answers = stability_api.generate(
+            prompt=my_prompt,
+            init_image=base_image,
+            start_schedule=0.6,
+            # guidance_strength=0.25,
+            # mask_image=base_image,
+            samples=wanted_samples,
+            # height=height,
+            # width=width,
+            # steps=50,
+            # cfg_scale=7.0,
+            # seed=2895508001,
+            # guidance_prompt=my_prompt
+        )
 
     n = 1 # Image counter for each session
 
@@ -80,3 +97,8 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
                 db.session.add(new_image)
                 db.session.commit()
                 n += 1
+
+
+def resize_image(base_image_url):
+    image_to_resize = Image.open(f"apps/static/assets/img/bases/{base_image_url}")
+    print(image_to_resize.size)

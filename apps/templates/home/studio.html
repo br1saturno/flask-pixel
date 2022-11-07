@@ -15,7 +15,7 @@
         <section class="section-header bg-secondary">
             <div class="container">
                 <div class="row justify-content-between align-items-center d-flex align-items-stretch">
-                    <div class="col-12 col-md-7 col-lg-4 text-center text-md-left">
+                    <div class="col-12 col-md-5 col-lg-4 text-center text-md-left">
                         <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
                             <div class="card-header bg-white border-0 text-center">
                                 <h2>Get inspired!</h2>
@@ -23,6 +23,18 @@
                             </div>
                             <div class="card-body pt-0">
                                 <form enctype = "multipart/form-data" action="{{ url_for('studio_blueprint.generate_image') }}" method="POST">
+                                    <!-- Form -->
+                                    <div class="mb-4">
+                                        <label for="baseimage">Select base image:</label>
+                                        <input type="file" id="baseimage" name="inimage">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="scratch">
+                                            <label class="form-check-label" for="flexSwitchCheckDefault">Or start from
+                                                scratch</label>
+
+                                        </div>
+                                    </div>
+                                    <!-- End of Form -->
                                     <!-- Form -->
                                     <div class="mb-4">
                                         <select class="form-select form-select-sm" name="style" aria-label="Style select">
@@ -54,40 +66,51 @@
                                     </div>
                                     <!-- End of Form -->
                                     <!-- Form -->
-                                    <div class="mb-4">
-<!--                                        <label for="name">Image Name</label>-->
-                                        <div class="input-group">
-                                            <span class="input-group-text" id="basic-addon5"><span class="fas fa-camera-retro"></span></span>
-                                            <input type="text" class="form-control form-control-sm" name="iname" placeholder="Image name" id="image_name" required>
+                                    <div class="mb-4 row">
+                                        <label for="samplesRange" class="form-label">Number of samples</label>
+                                        <div class="col-sm-9">
+                                        <input type="range" class="form-range" name="amountRange" min="1" max="4" value="1" step="1" id="samplesRange" oninput="this.form.amountInput.value=this.value">
+                                        </div>
+                                        <div class="col-sm-3">
+                                        <input type="text" class="form-control form-control-sm" value="1" name="amountInput" disabled readonly>
                                         </div>
                                     </div>
                                     <!-- End of Form -->
                                     <!-- Form -->
-                                    <div class="mb-4">
-                                        <label for="customRange2" class="form-label">Number of samples</label>
-                                        <input type="range" class="form-range" name="amountRange" min="1" max="4" value="1" id="customRange2" oninput="this.form.amountInput.value=this.value">
-                                        <select class="form-select form-select-sm" name="amountInput" value="1" id="customRange3"
-                                                oninput="this.form.amountRange.value=this.value">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                        </select>
+                                    <div class="mb-4 row">
+                                        <label for="customWidth" class="form-label">Width <span class="fas fa-info-circle" title="Select 'start from scratch' to change dimensions."></span></label>
+                                        <div class="col-sm-8">
+                                        <input type="range" class="form-range" name="widthRange" min="512" max="1024" value="512" step="64" id="customRange4" oninput="this.form.widthInput.value=this.value" disabled>
+                                        </div>
+                                        <div class="col-sm-4">
+                                        <input type="text" class="form-control form-control-sm" value="512" name="widthInput" id="customWidth" readonly>
+                                        </div>
                                     </div>
                                     <!-- End of Form -->
                                     <!-- Form -->
-                                    <div class="mb-4">
-                                        <label for="baseimage">Select base image:</label>
-                                        <input type="file" id="baseimage" name="inimage">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                                            <label class="form-check-label" for="flexSwitchCheckDefault">Or start from
-                                                scratch</label>
+                                    <div class="mb-4 row">
+                                        <label for="customHeight" class="form-label">Height <span class="fas fa-info-circle" title="Select 'start from scratch' to change dimensions."></span></label>
+                                        <div class="col-sm-8">
+                                            <input type="range" class="form-range" name="heightRange" min="512"
+                                                   max="1024" value="512" step="64" id="customRange6"
+                                                   oninput="this.form.heightInput.value=this.value" disabled>
                                         </div>
+                                        <div class="col-sm-4">
+                                        <input type="text" class="form-control form-control-sm" value="512" name="heightInput" id="customHeight" readonly>
+                                        </div>
+                                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+                                        <script>
+                                        $('#flexSwitchCheckDefault').on('change', function(event, state) {
+                                            var status = $('#customRange4').prop('disabled');
+                                            var status2 = $('#customRange6').prop('disabled');
+                                            $('#customRange4').prop('disabled', !status);
+                                            $('#customRange6').prop('disabled', !status2);
+                                        });
+                                        </script>
                                     </div>
                                     <!-- End of Form -->
                                     <div class="d-grid">
-                                        <button type="submit" class="btn btn-secondary">Render</button>
+                                        <button type="submit" class="btn btn-secondary" >Render</button>
                                     </div>
                                 </form>
                             </div>
@@ -96,11 +119,29 @@
 <!--                        <p class="lead mb-4 text-muted">Themesberg can help you build a modern website, a creative logo or PWA, that will bring you customers and and stay on top of your competition.</p>-->
 <!--                        <a href="./services.html" class="btn btn-tertiary me-3 animate-up-2">What we do <span class="ms-2"><span class="fas fa-arrow-right"></span></span></a>-->
                     </div>
-                    <div class="col-12 col-md-5 col-lg-8 text-center">
+                    <div class="col-12 col-md-7 col-lg-8 text-center">
                         <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
-                            <div>
+                            <div class="row gy-3">
                                 {% for image in images: %}
-                                <img src="{{url_for('static',filename=image.gen_image)}}">
+                                {% if samples > 1: %}
+                                <div class="col-md-6 col-lg-6">
+                                <img class="gen-img" src="{{url_for('static',filename=image.gen_image)}}" >
+                                    <div class="row pt-1">
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-secondary btn-sm">Variation</button>
+                                    </div>
+                                    </div>
+                                </div>
+                                {% else: %}
+                                <div class="">
+                                <img class="gen-img" src="{{url_for('static',filename=image.gen_image)}}">
+                                    <div class="row pt-1">
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-secondary btn-sm">Variation</button>
+                                    </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                                 {% endfor %}
                             </div>
                         </div>
