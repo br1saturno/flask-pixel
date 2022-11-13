@@ -1,6 +1,8 @@
-# TODO Expand image in modal when clicked
-# TODO Loading message or animation when processing
-# TODO Add "quality" field to form
+# TODO Image displays big when thumbnail is clicked
+# TODO Info of each image in a popover
+# TODO Add "quality" field to form (steps)
 # TODO Include the variations function to routes/util
-# TODO Store every field of the prompt form in the database instead of storing the promp
-# TODO All select fields are required, otherwise I get an error. Correct it
+# TODO Images from same session appear at the bottom of the images card (maybe an iframe so it's scrollable)
+# TODO Redo database with all needed columns
+# TODO Variations UI
+# TODO Vertical menu

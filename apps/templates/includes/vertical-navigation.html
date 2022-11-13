@@ -1,0 +1,34 @@
+<header class="header-global">
+    <nav id="navbar-main" aria-label="Primary navigation"
+         class="navbar navbar-main navbar-expand-lg navbar-theme-primary headroom navbar-dark">
+        <ul class="navbar-nav navbar-nav-hover">
+            <li class="nav-item">
+                <a class="nav-link active" href="#"> Home </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"> Studio
+                    <span class="fas fa-angle-right nav-link-arrow ms-1"></span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"> Gallery </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"> Bookmarked </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"> Community </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"> Help </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"> Account </a>
+            </li>
+            <li><a href="{{ url_for('authentication_blueprint.logout') }}"
+                   class="btn btn-outline-gray-100 d-none d-lg-inline me-md-3"><span
+                    class="fas fa-sign-out-alt me-2"></span> Logout</a></li>
+        </ul>
+
+    </nav>
+</header>
+

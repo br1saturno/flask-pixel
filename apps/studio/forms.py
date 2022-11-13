@@ -35,6 +35,17 @@ colors_combs = [("sage green", "beige", "cream white"), ("blue", "tan", "crisp w
 
 color_moods_dict = {color_moods[n][0]: colors_combs[n] for n in range(len(colors_combs))}
 
+aspect_ratio = [("1", "4:3"), ("2", "3:4"), ("3", "1:1"), ("4", "16:9"), ("5", "9:16")]
+
+aspect_ratio_low = {
+    "1": (512, 384),
+    "2": (384, 512),
+    "3": (512, 512),
+    "4": (1024, 576),
+    "5": (576, 1024),
+}
+
+
 class StudioForm(FlaskForm):
     style = SelectField(u'Style', choices=styles, id='style', validators=[DataRequired()])
     color_mood = SelectField(u'Color feel', choices=color_moods, id='color_feel', validators=[DataRequired()])

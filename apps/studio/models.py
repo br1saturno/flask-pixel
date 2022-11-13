@@ -12,4 +12,4 @@ class AImages(db.Model):
     prompt = db.Column(db.String(1000), nullable=False)
     image_name = db.Column(db.String(250), nullable=False)
     gen_image = db.Column(db.String(250), unique=True, nullable=False)
-    base_image = db.Column(db.String(250), nullable=False)
+    base_image = db.Column(db.String(250), nullable=True)

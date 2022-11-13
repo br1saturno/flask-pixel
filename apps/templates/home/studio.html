@@ -7,436 +7,590 @@
 
 {% block content %}
 
-    <main>
-        
-<!--        {% include 'includes/preloader.html' %}-->
+<main>
 
-        <!-- Hero -->
-        <section class="section-header bg-secondary">
-            <div class="container">
-                <div class="row justify-content-between align-items-center d-flex align-items-stretch">
-                    <div class="col-12 col-md-5 col-lg-4 text-center text-md-left">
-                        <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
-                            <div class="card-header bg-white border-0 text-center">
-                                <h2>Get inspired!</h2>
-                                <p>Select the preferences for your project:</p>
-                            </div>
-                            <div class="card-body pt-0">
-                                <form enctype = "multipart/form-data" action="{{ url_for('studio_blueprint.generate_image') }}" method="POST">
-                                    <!-- Form -->
-                                    <div class="mb-4">
-                                        <label for="baseimage">Select base image:</label>
-                                        <input type="file" id="baseimage" name="inimage">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="scratch">
-                                            <label class="form-check-label" for="flexSwitchCheckDefault">Or start from
-                                                scratch</label>
+<!--            {% include 'includes/preloader.html' %}-->
 
-                                        </div>
+    <!-- Hero -->
+    <section class="section-header bg-secondary">
+        <div class="container">
+            <div class="row justify-content-between align-items-center d-flex align-items-stretch">
+                <div class="col-12 col-md-5 col-lg-4 text-center text-md-left">
+                    <div class="card border-0 p-2 p-md-3 p-lg-4 mb-3">
+                        <div class="card-header bg-white border-0 text-center">
+                            <h2>Get inspired!</h2>
+                            <p>Select the preferences for your project:</p>
+                        </div>
+                        <div class="card-body pt-0">
+                            <form class="needs-validation" enctype="multipart/form-data"
+                                  action="{{ url_for('studio_blueprint.generate_image', variation_image='none', var=0) }}" method="POST" novalidate>
+                                <!-- Form -->
+                                <div class="mb-4 input-group">
+                                    <div class="custom-file">
+                                    <label class="custom-file-label" for="baseimage">Select base image:</label>
+                                    <input type="file" class="custom-file-input form-control" id="baseimage" name="inimage" aria-describedby="inputGroupFileAddon01" required>
                                     </div>
-                                    <!-- End of Form -->
-                                    <!-- Form -->
-                                    <div class="mb-4">
-                                        <select class="form-select form-select-sm" name="style" aria-label="Style select">
-                                            <option selected>Style</option>
-                                            {% for style in styles: %}
-                                            <option value="{{ style[0] }}">{{ style[1] }}</option>
-                                            {% endfor %}
-                                        </select>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                                               name="scratch">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Or start from
+                                            scratch</label>
                                     </div>
-                                    <!-- End of Form -->
-                                    <!-- Form -->
-                                    <div class="mb-4">
-                                        <select class="form-select form-select-sm" name="color_mood" aria-label="Color feel select">
-                                            <option selected>Color mood</option>
-                                            {% for mood in moods: %}
-                                            <option value="{{ mood[0] }}">{{ mood[1] }}</option>
-                                            {% endfor %}
-                                        </select>
+                                </div>
+                                <!-- End of Form -->
+                                <!-- Form -->
+                                <div class="mb-4">
+                                    <select class="form-select form-select-sm" name="style" aria-label="Style select"
+                                            required>
+                                        <option selected disabled value="">Choose style...</option>
+                                        {% for style in styles: %}
+                                        <option value="{{ style[0] }}">{{ style[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a style.
                                     </div>
-                                    <!-- End of Form -->
-                                    <!-- Form -->
-                                    <div class="mb-4">
-                                        <select class="form-select form-select-sm" name="room" aria-label="Type of room select">
-                                            <option selected>Type of room</option>
-                                            {% for room in rooms: %}
-                                            <option value="{{ room[0] }}">{{ room[1] }}</option>
-                                            {% endfor %}
-                                        </select>
+                                </div>
+                                <!-- End of Form -->
+                                <!-- Form -->
+                                <div class="mb-4">
+                                    <select class="form-select form-select-sm" name="color_mood"
+                                            aria-label="Color feel select" required>
+                                        <option selected disabled value="">Choose color mood...</option>
+                                        {% for mood in moods: %}
+                                        <option value="{{ mood[0] }}">{{ mood[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a color mood.
                                     </div>
-                                    <!-- End of Form -->
-                                    <!-- Form -->
-                                    <div class="mb-4 row">
-                                        <label for="samplesRange" class="form-label">Number of samples</label>
-                                        <div class="col-sm-9">
-                                        <input type="range" class="form-range" name="amountRange" min="1" max="4" value="1" step="1" id="samplesRange" oninput="this.form.amountInput.value=this.value">
-                                        </div>
-                                        <div class="col-sm-3">
-                                        <input type="text" class="form-control form-control-sm" value="1" name="amountInput" disabled readonly>
-                                        </div>
+                                </div>
+                                <!-- End of Form -->
+                                <!-- Form -->
+                                <div class="mb-4">
+                                    <select class="form-select form-select-sm" name="room"
+                                            aria-label="Type of room select" required>
+                                        <option selected disabled value="">Choose type of room...</option>
+                                        {% for room in rooms: %}
+                                        <option value="{{ room[0] }}">{{ room[1] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select a type of room.
                                     </div>
-                                    <!-- End of Form -->
-                                    <!-- Form -->
-                                    <div class="mb-4 row">
-                                        <label for="customWidth" class="form-label">Width <span class="fas fa-info-circle" title="Select 'start from scratch' to change dimensions."></span></label>
-                                        <div class="col-sm-8">
-                                        <input type="range" class="form-range" name="widthRange" min="512" max="1024" value="512" step="64" id="customRange4" oninput="this.form.widthInput.value=this.value" disabled>
-                                        </div>
-                                        <div class="col-sm-4">
-                                        <input type="text" class="form-control form-control-sm" value="512" name="widthInput" id="customWidth" readonly>
-                                        </div>
+                                </div>
+                                <!-- End of Form -->
+                                <!-- Form -->
+                                <div class="mb-4 row">
+                                    <label for="samplesRange" class="form-label">Number of samples</label>
+                                    <div class="col-sm-9">
+                                        <input type="range" class="form-range" name="amountRange" min="1" max="4"
+                                               value="1" step="1" id="samplesRange"
+                                               oninput="this.form.amountInput.value=this.value">
                                     </div>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control form-control-sm" value="1"
+                                               name="amountInput" disabled readonly>
+                                    </div>
+                                </div>
+                                <!-- End of Form -->
+                                <!-- Form -->
+                                <div class="mb-4">
+                                    <select class="form-select form-select-sm" id="aspectRatio" name="ratio"
+                                            aria-label="Aspect ratio of the image" disabled required>
+                                        <option selected disabled value="">Choose image aspect ratio...</option>
+                                        <option value="1" >4:3</option>
+                                        <option value="2" >3:4</option>
+                                        <option value="3" >1:1</option>
+<!--                                        <option value="4" >16:9</option>-->
+<!--                                        <option value="5" >9:16</option>-->
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Please select aspect ratio.
+                                    </div>
+                                </div>
+                                <!-- End of Form -->
+                                <!-- Form -->
+<!--                                <div class="mb-4 row">-->
+<!--                                    <label for="customWidth" class="form-label">Width <span class="fas fa-info-circle"-->
+<!--                                                                                            title="Select 'start from scratch' to change dimensions."></span></label>-->
+<!--                                    <div class="col-sm-8">-->
+<!--                                        <input type="range" class="form-range" name="widthRange" min="512" max="1024"-->
+<!--                                               value="512" step="64" id="customRange4"-->
+<!--                                               oninput="this.form.widthInput.value=this.value" disabled>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-sm-4">-->
+<!--                                        <input type="text" class="form-control form-control-sm" value="512"-->
+<!--                                               name="widthInput" id="customWidth" readonly>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                &lt;!&ndash; End of Form &ndash;&gt;-->
+<!--                                &lt;!&ndash; Form &ndash;&gt;-->
+<!--                                <div class="mb-4 row">-->
+<!--                                    <label for="customHeight" class="form-label">Height <span class="fas fa-info-circle"-->
+<!--                                                                                              title="Select 'start from scratch' to change dimensions."></span></label>-->
+<!--                                    <div class="col-sm-8">-->
+<!--                                        <input type="range" class="form-range" name="heightRange" min="512"-->
+<!--                                               max="1024" value="512" step="64" id="customRange6"-->
+<!--                                               oninput="this.form.heightInput.value=this.value" disabled>-->
+<!--                                    </div>-->
+<!--                                    <div class="col-sm-4">-->
+<!--                                        <input type="text" class="form-control form-control-sm" value="512"-->
+<!--                                               name="heightInput" id="customHeight" readonly>-->
+<!--                                    </div>-->
+<!--                                </div>-->
                                     <!-- End of Form -->
-                                    <!-- Form -->
-                                    <div class="mb-4 row">
-                                        <label for="customHeight" class="form-label">Height <span class="fas fa-info-circle" title="Select 'start from scratch' to change dimensions."></span></label>
-                                        <div class="col-sm-8">
-                                            <input type="range" class="form-range" name="heightRange" min="512"
-                                                   max="1024" value="512" step="64" id="customRange6"
-                                                   oninput="this.form.heightInput.value=this.value" disabled>
-                                        </div>
-                                        <div class="col-sm-4">
-                                        <input type="text" class="form-control form-control-sm" value="512" name="heightInput" id="customHeight" readonly>
-                                        </div>
-                                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-                                        <script>
+                                    <!-- Script to disable/enable fields when starting from scratch -->
+                                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+                                    <script>
+                                        <!-- Disables / enables fields when 'start from scratch' option is selected -->
                                         $('#flexSwitchCheckDefault').on('change', function(event, state) {
                                             var status = $('#customRange4').prop('disabled');
                                             var status2 = $('#customRange6').prop('disabled');
+                                            var status3 = $('#baseimage').prop('disabled');
+                                            var status4 = $('#aspectRatio').prop('disabled');
                                             $('#customRange4').prop('disabled', !status);
                                             $('#customRange6').prop('disabled', !status2);
+                                            $('#baseimage').prop('disabled', !status3);
+                                            $('#aspectRatio').prop('disabled', !status4);
                                         });
-                                        </script>
-                                    </div>
-                                    <!-- End of Form -->
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-secondary" >Render</button>
-                                    </div>
-                                </form>
-                            </div>
+
+                                    </script>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-secondary">Render</button>
+                                </div>
+                            </form>
+                            <!-- Spinner -->
+                            <script>
+                                function spinner() {
+                                    document.getElementsByClassName("loader")[0].style.display = "block";
+                                }
+                            </script>
+                            <!-- End Spinner -->
+                            <!-- Form validation -->
+                            <script>
+                                    (function () {
+                                        'use strict'
+
+                                        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                                        var forms = document.querySelectorAll('.needs-validation')
+
+                                        // Loop over them and prevent submission
+                                        Array.prototype.slice.call(forms)
+                                        .forEach(function (form) {
+                                        form.addEventListener('submit', function (event) {
+                                        if (!form.checkValidity()) {
+                                            event.preventDefault()
+                                            event.stopPropagation()
+                                        }
+                                            form.classList.add('was-validated')
+                                            if (form.checkValidity()) {
+                                            spinner()
+                                            }
+                                        }, false)
+
+                                    })
+
+                            })()
+                            </script>
+                            <!-- End of form validation -->
                         </div>
-<!--                        <h1 class="display-2 mb-4">Full-Service <br class="d-none d-md-inline">Digital Agency</h1>-->
-<!--                        <p class="lead mb-4 text-muted">Themesberg can help you build a modern website, a creative logo or PWA, that will bring you customers and and stay on top of your competition.</p>-->
-<!--                        <a href="./services.html" class="btn btn-tertiary me-3 animate-up-2">What we do <span class="ms-2"><span class="fas fa-arrow-right"></span></span></a>-->
                     </div>
-                    <div class="col-12 col-md-7 col-lg-8 text-center">
-                        <div class="card border-0 p-2 p-md-3 p-lg-4 h-100">
-                            <div class="row gy-3">
-                                {% for image in images: %}
-                                {% if samples > 1: %}
-                                <div class="col-md-6 col-lg-6">
-                                <img class="gen-img" src="{{url_for('static',filename=image.gen_image)}}" >
-                                    <div class="row pt-1">
-                                    <div class="text-center">
+                    <!--                        <h1 class="display-2 mb-4">Full-Service <br class="d-none d-md-inline">Digital Agency</h1>-->
+                    <!--                        <p class="lead mb-4 text-muted">Themesberg can help you build a modern website, a creative logo or PWA, that will bring you customers and and stay on top of your competition.</p>-->
+                    <!--                        <a href="./services.html" class="btn btn-tertiary me-3 animate-up-2">What we do <span class="ms-2"><span class="fas fa-arrow-right"></span></span></a>-->
+                </div>
+<!-- Form section ends here -->
+
+<!-- Results section starts here -->
+                <div class="col-12 col-md-7 col-lg-8 text-center">
+                    <div class="card border-0 p-3 p-md-3 p-lg-4 mb-3">
+                        <div class="row">
+                            <p>Your results: <span class="fas fa-info-circle" data-bs-container="body"
+                            data-bs-toggle="popover" data-bs-placement="right" title="Your preferences."
+                            data-bs-content="{{ details }}"></span></p>
+                        </div>
+                        <div class="border-top px-4 py-5" id="thumbnails-top-border">
+                            <div class="loader">
+                                <div class="loading">
+                                </div>
+                            </div>
+                        <div class="row gy-3 mb-1 pb-0 d-flex flex-row flex-nowrap scroll-thumbs">
+                            {% for image in images: %}
+                            <div class="col-lg-3 col-md-4 col-md-6 pb-0">
+                                <div class="row pt-0 pb-0">
+                                <img class="gen-img thumb" src="{{url_for('static',filename=image.gen_image)}}">
+                                </div>
+                                <div class="row pt-2 text-center pb-0">
+                                    <div class="col-6 pb-0">
+                                        <form class="needs-validation"
+                                  action="{{ url_for('studio_blueprint.generate_image', variation_image=loop.index, var=1) }}" method="POST" novalidate>
                                         <button type="submit" class="btn btn-secondary btn-sm">Variation</button>
-                                    </div>
+                                        </form>
                                     </div>
                                 </div>
-                                {% else: %}
-                                <div class="">
-                                <img class="gen-img" src="{{url_for('static',filename=image.gen_image)}}">
-                                    <div class="row pt-1">
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-secondary btn-sm">Variation</button>
-                                    </div>
-                                    </div>
-                                </div>
-                                {% endif %}
-                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="card border-0 p-2 p-md-2 p-lg-3 mb-3">
+<!--                        <div class="card-header border-0 text-center">-->
+<!--                            <h2>Your result:</h2>-->
+<!--                        </div>-->
+                        <div class="row gy-3">
+<!--                            {% for image in images: %}-->
+<!--                            {% if loop.first: %}-->
+<!--                            <div>-->
+<!--                                <div id="">-->
+<!--                                <img class="gen-img" src="{{url_for('static',filename=image.gen_image)}}">-->
+<!--                                </div>-->
+<!--                                <div class="row pt-2 pb-2">-->
+<!--                                    <div class="text-center">-->
+<!--                                        <button type="submit" class="btn btn-secondary btn-sm">Variation</button>-->
+<!--                                        <span class="fas fa-info-circle" data-bs-container="body"-->
+<!--                            data-bs-toggle="popover" data-bs-placement="right" title="Your preferences."-->
+<!--                            data-bs-content="{{ room }}, {{ style }} style, {{ mood }} color accents. Aspect ratio {{ aspect_ratio }}. - Click again to dismiss -"></span>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            {% endif %}-->
+<!--                            {% endfor %}-->
+                            <div id="player-box">
                             </div>
                         </div>
                     </div>
-               </div>
+                </div>
+                <script>
+                    // this "lazy" getter for playerImg will either return or create the img
+                function playerImg() {
+                  let playerImg = document.getElementById('playerimg');
+                  if (!playerImg) {
+                    playerImg = document.createElement('img');
+                    playerImg.id = 'playerimg';
+                    document.getElementById('player-box').appendChild(playerImg);
+                  }
+                  return playerImg;
+                }
+
+                // set the source attribute of the playerImg
+                function setPlayerImg(src) {
+                  playerImg().setAttribute('src', src);
+                }
+
+                // get the elements with their common class
+                const imgs = document.getElementsByClassName("thumb");
+
+                // for each, add a click handler that calls our src setting function
+                for (let i = 0; i < imgs.length; i++) {
+                  const el = imgs[i];
+                  el.addEventListener('click', () => setPlayerImg(el.src), false);
+                }
+                </script>
+                <!-- Results section ends here -->
             </div>
-            <figure class="position-absolute bottom-0 left-0 w-100 d-none d-md-block mb-n2">
-               <svg class="fill-white" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 43.4" style="enable-background:new 0 0 1920 43.4;" xml:space="preserve">
+        </div>
+        <figure class="position-absolute bottom-0 left-0 w-100 d-none d-md-block mb-n2">
+            <svg class="fill-white" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 43.4"
+                 style="enable-background:new 0 0 1920 43.4;" xml:space="preserve">
                   <path d="M0,23.3c0,0,405.1-43.5,697.6,0c316.5,1.5,108.9-2.6,480.4-14.1c0,0,139-12.2,458.7,14.3 c0,0,67.8,19.2,283.3-22.7v35.1H0V23.3z"></path>
                </svg>
-            </figure>
-        </section>
-        <!-- End of Hero section -->
+        </figure>
+    </section>
+    <!-- End of Hero section -->
 
-        <!-- Section -->
-        <section class="section section-md">
-            <div class="container">
-                <div class="row align-items-center justify-content-around">
-                    <div class="col-md-6 col-xl-6 mb-5">
-                        <img class="organic-radius img-fluid" src="/static/assets/img/sections/about-us-1.jpg" alt="Office Desk">
-                    </div>
-                    <div class="col-md-6 col-xl-5 text-center text-md-left">
-                        <h2 class="h1 mb-5">All challenges accepted.</h2>
-                        <p class="lead">Themesberg is an experienced and passionate group of designers, developers, project managers, writers and artists. Every client we work with becomes a part of the team. Together we face the challenges and celebrate the victories.</p>
-                        <p class="lead">With a culture of collaboration, a roster of talent, and several office pooches, the Themesberg team is active in the creative community, endlessly interested in what’s next, and generally pleasant to be around.</p>
-                        <img src="/static/assets/img/signature.svg" alt="signature" class="mt-4" width="150">
-                    </div>
+    <!-- Section -->
+    <section class="section section-md">
+        <div class="container">
+            <div class="row align-items-center justify-content-around">
+                <div class="col-md-6 col-xl-6 mb-5">
+                    <img class="organic-radius img-fluid" src="/static/assets/img/sections/about-us-1.jpg"
+                         alt="Office Desk">
+                </div>
+                <div class="col-md-6 col-xl-5 text-center text-md-left">
+                    <h2 class="h1 mb-5">All challenges accepted.</h2>
+                    <p class="lead">Themesberg is an experienced and passionate group of designers, developers, project
+                        managers, writers and artists. Every client we work with becomes a part of the team. Together we
+                        face the challenges and celebrate the victories.</p>
+                    <p class="lead">With a culture of collaboration, a roster of talent, and several office pooches, the
+                        Themesberg team is active in the creative community, endlessly interested in what’s next, and
+                        generally pleasant to be around.</p>
+                    <img src="/static/assets/img/signature.svg" alt="signature" class="mt-4" width="150">
                 </div>
             </div>
-        </section>
-        <!-- End of section -->
+        </div>
+    </section>
+    <!-- End of section -->
 
-        <!-- Section -->
-        <section class="section section-lg pt-0">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4 col-lg-4 text-center">
-                        <!-- Visit Box -->
-                        <div class="icon-box mb-4">
-                            <div class="icon icon-primary mb-4">
-                                <span class="fas fa-user"></span>
-                            </div>
-                            <h3 class="h5">Team Members</h3>
-                            <span class="counter display-3 text-gray d-block">500</span>
+    <!-- Section -->
+    <section class="section section-lg pt-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-lg-4 text-center">
+                    <!-- Visit Box -->
+                    <div class="icon-box mb-4">
+                        <div class="icon icon-primary mb-4">
+                            <span class="fas fa-user"></span>
                         </div>
-                        <!-- End of Visit Box -->
+                        <h3 class="h5">Team Members</h3>
+                        <span class="counter display-3 text-gray d-block">500</span>
                     </div>
-                    <div class="col-md-4 col-lg-4 text-center">
-                        <!-- Call Box -->
-                        <div class="icon-box mb-4">
-                            <div class="icon icon-primary mb-4">
-                                <span class="fas fa-money-check"></span>
-                            </div>
-                            <h3 class="h5">Projects Published</h3>
-                            <span class="counter display-3 text-gray d-block">2400</span>
+                    <!-- End of Visit Box -->
+                </div>
+                <div class="col-md-4 col-lg-4 text-center">
+                    <!-- Call Box -->
+                    <div class="icon-box mb-4">
+                        <div class="icon icon-primary mb-4">
+                            <span class="fas fa-money-check"></span>
                         </div>
-                        <!-- End of Call Box -->
+                        <h3 class="h5">Projects Published</h3>
+                        <span class="counter display-3 text-gray d-block">2400</span>
                     </div>
-                    <div class="col-md-4 col-lg-4 text-center">
-                        <!-- Email Box -->
-                        <div class="icon-box mb-4">
-                            <div class="icon icon-primary mb-4">
-                                <span class="fas fa-globe-europe"></span>
-                            </div>
-                            <h3 class="h5">Countries</h3>
-                            <span class="counter display-3 text-gray d-block">80</span>
+                    <!-- End of Call Box -->
+                </div>
+                <div class="col-md-4 col-lg-4 text-center">
+                    <!-- Email Box -->
+                    <div class="icon-box mb-4">
+                        <div class="icon icon-primary mb-4">
+                            <span class="fas fa-globe-europe"></span>
                         </div>
-                        <!-- End of Email Box -->
+                        <h3 class="h5">Countries</h3>
+                        <span class="counter display-3 text-gray d-block">80</span>
                     </div>
+                    <!-- End of Email Box -->
                 </div>
             </div>
-        </section>
-        <!-- End of section -->
+        </div>
+    </section>
+    <!-- End of section -->
 
-        <!-- Section -->
-        <section class="section section-lg bg-gray-200">
-            <figure class="position-absolute top-0 left-0 w-100 d-none d-md-block mt-n3">
-                <svg class="fill-gray-200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 43.4" style="enable-background:new 0 0 1920 43.4;" xml:space="preserve">
+    <!-- Section -->
+    <section class="section section-lg bg-gray-200">
+        <figure class="position-absolute top-0 left-0 w-100 d-none d-md-block mt-n3">
+            <svg class="fill-gray-200" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 43.4"
+                 style="enable-background:new 0 0 1920 43.4;" xml:space="preserve">
                    <path d="M0,23.3c0,0,405.1-43.5,697.6,0c316.5,1.5,108.9-2.6,480.4-14.1c0,0,139-12.2,458.7,14.3 c0,0,67.8,19.2,283.3-22.7v35.1H0V23.3z"></path>
                 </svg>
-             </figure>
-            <div class="container">
-                <div class="row text-center">
-                    <div class="col">
-                        <h2 class="h1 fw-light"><span class="fw-bold">Our</span> history</h2>
-                    </div>
-                </div>
-                <div class="row justify-content-center mt-6">
-                    <div class="row justify-content-center">
-                        <div class="col-md-12 col-lg-8">
-                            <div class="timeline timeline-one dark px-3 px-sm-0">
-                                <!-- Timeline Item 1 -->
-                                <div class="timeline-item">
-                                    <h3 class="h4 mb-4">Present</h3>
-                                    <p>Now over seven years old, Bootstrap is an established and widely-used HTML, CSS, and JavaScript framework. It can be used as a basis for creating responsive web and mobile sites and web applications.</p>
-                                </div>
-                                <!-- Timeline Item 2 -->
-                                <div class="timeline-item">
-                                    <h3 class="h4 mb-4">Our first products</h3>
-                                    <div class="my-3">
-                                        <span class="icon icon-sm icon-purple me-2"><span class="fab fa-bootstrap"></span></span>
-                                        <span class="icon icon-sm icon-info me-2"><span class="fab fa-react"></span></span>
-                                        <span class="icon icon-sm icon-success me-2"><span class="fab fa-vuejs"></span></span>
-                                        <span class="icon icon-sm icon-danger"><span class="fab fa-angular"></span></span>
-                                    </div>
-                                    <p>Bootstrap. Build responsive, mobile-first projects on the web with the world's most popular front-end component library. Bootstrap is an open source toolkit for developing with HTML, CSS, and JS. Quickly prototype your
-                                        ideas.
-                                    </p>
-                                </div>
-                                <!-- Timeline Item 3 -->
-                                <div class="timeline-item">
-                                    <h3 class="h4 mb-4">Our office</h3>
-                                    <img class="mt-2" src="/static/assets/img/office.png" alt="Themesberg workspace" width="300">
-                                    <p>AngularJS is a JavaScript-based open-source front-end web application framework mainly maintained by Google and by a community of individuals and corporations to address many of the challenges encountered in developing
-                                        single-page applications.
-                                    </p>
-                                </div>
-                                <!-- Timeline Item 4 -->
-                                <div class="timeline-item">
-                                    <h3 class="h4 mb-4">An ideea becomes a business</h3>
-                                    <p>AngularJS is a JavaScript-based open-source front-end web application framework mainly maintained by Google and by a community of individuals and corporations to address many of the challenges encountered in developing
-                                        single-page applications.
-                                    </p>
-                                    <img class="mt-2" src="/static/assets/img/signature.svg" alt="signature" width="100">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        </figure>
+        <div class="container">
+            <div class="row text-center">
+                <div class="col">
+                    <h2 class="h1 fw-light"><span class="fw-bold">Our</span> history</h2>
                 </div>
             </div>
-            <figure class="position-absolute bottom-0 left-0 w-100 d-none d-md-block mb-n2">
-                <svg class="fill-white" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 43.4" style="enable-background:new 0 0 1920 43.4;" xml:space="preserve">
-                   <path d="M0,23.3c0,0,405.1-43.5,697.6,0c316.5,1.5,108.9-2.6,480.4-14.1c0,0,139-12.2,458.7,14.3 c0,0,67.8,19.2,283.3-22.7v35.1H0V23.3z"></path>
-                </svg>
-             </figure>
-        </section>
-
-        <!-- Section -->
-        <section class="section section-lg">
-            <div class="container">
-                <div class="row mb-5 mb-lg-6">
-                    <div class="col-12 col-md-9 col-lg-8 text-center mx-auto">
-                        <h2 class="h1 mb-4">Funny &amp; Creative Team</h2>
-                        <p class="lead">We have developed a multi-discipline portfolio as a digital marketing agency, we also have roots in print media and even photography.
-                        </p>
-                    </div>
-                </div>
-                <div class="row mb-5 mb-lg-6">
-                    <div class="col-12 col-md-6 col-lg-4 mb-5 mb-lg-0">
-                        <div class="card shadow border-gray-300">
-                            <img src="/static/assets/img/team/profile-picture-1.jpg" class="card-img-top rounded-top" alt="Joseph Portrait">
-                            <div class="card-body">
-                                <h3 class="h4 card-title mb-2">Joseph Garth</h3>
-                                <span class="card-subtitle text-gray fw-normal">Co-Founder</span>
-                                <p class="card-text my-3">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <ul class="list-unstyled d-flex mt-3 mb-0">
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="facebook social link" class="icon-facebook me-3">
-                                            <span class="fab fa-facebook-f"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="twitter social link" class="icon-twitter me-3">
-                                            <span class="fab fa-twitter"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="slack social link" class="icon-slack me-3">
-                                            <span class="fab fa-slack-hash"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="dribbble social link" class="icon-dribbble me-3">
-                                            <span class="fab fa-dribbble"></span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-4 mb-5 mb-lg-0">
-                        <div class="card shadow border-gray-300">
-                            <img src="/static/assets/img/team/profile-picture-3.jpg" class="card-img-top rounded-top" alt="Bonnie portrait">
-                            <div class="card-body">
-                                <h3 class="h4 card-title mb-2">Bonnie Green</h3>
-                                <span class="card-subtitle text-gray fw-normal">Web Developer</span>
-                                <p class="card-text my-3">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <ul class="list-unstyled d-flex mt-3 mb-0">
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="facebook social link" class="icon-facebook me-3">
-                                            <span class="fab fa-facebook-f"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="twitter social link" class="icon-twitter me-3">
-                                            <span class="fab fa-twitter"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="slack social link" class="icon-slack me-3">
-                                            <span class="fab fa-slack-hash"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="dribbble social link" class="icon-dribbble me-3">
-                                            <span class="fab fa-dribbble"></span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card shadow border-gray-300">
-                            <img src="/static/assets/img/team/profile-picture-4.jpg" class="card-img-top rounded-top" alt="Jose Avatar">
-                            <div class="card-body">
-                                <h3 class="h4 card-title mb-2">Jose Leos</h3>
-                                <span class="card-subtitle text-gray fw-normal">Web publications designer</span>
-                                <p class="card-text my-3">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <ul class="list-unstyled d-flex mt-3 mb-0">
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="facebook social link" class="icon-facebook me-3">
-                                            <span class="fab fa-facebook-f"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="twitter social link" class="icon-twitter me-3">
-                                            <span class="fab fa-twitter"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="slack social link" class="icon-slack me-3">
-                                            <span class="fab fa-slack-hash"></span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" target="_blank" aria-label="dribbble social link" class="icon-dribbble me-3">
-                                            <span class="fab fa-dribbble"></span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="row justify-content-center mt-6">
                 <div class="row justify-content-center">
-                    <div class="col-12 col-lg-8">
-                        <!-- Contact Card -->
-                        <div class="card border-0 p-2 p-md-3 p-lg-5">
-                            <div class="card-header bg-white border-0 text-center">
-                                <h2>Want to work with us?</h2>
-                                <p>Cool! Let’s talk about your project</p>
+                    <div class="col-md-12 col-lg-8">
+                        <div class="timeline timeline-one dark px-3 px-sm-0">
+                            <!-- Timeline Item 1 -->
+                            <div class="timeline-item">
+                                <h3 class="h4 mb-4">Present</h3>
+                                <p>Now over seven years old, Bootstrap is an established and widely-used HTML, CSS, and
+                                    JavaScript framework. It can be used as a basis for creating responsive web and
+                                    mobile sites and web applications.</p>
                             </div>
-                            <div class="card-body pt-0">
-                                <form action="#">
-                                    <!-- Form -->
-                                    <div class="mb-4">
-                                        <label for="name">Your Name</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text" id="basic-addon3"><span class="fas fa-user-circle"></span></span>
-                                            <input type="text" class="form-control" placeholder="e.g. Bonnie Green" id="name" required>
-                                        </div>
-                                    </div>
-                                    <!-- End of Form -->
-                                    <!-- Form -->
-                                    <div class="mb-4">
-                                        <label for="email">Your Email</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text" id="basic-addon4"><span class="fas fa-envelope"></span></span>
-                                            <input type="email" class="form-control" placeholder="example@company.com" id="email" required>
-                                        </div>
-                                    </div>
-                                    <!-- End of Form -->
-                                    <div class="mb-4">
-                                        <label for="message">Your Message</label>
-                                        <textarea placeholder="Your message" class="form-control" id="message" rows="4" required></textarea>
-                                    </div>
-                                    <!-- End of Form -->
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-secondary">Send message</button>
-                                    </div>
-                                </form>
+                            <!-- Timeline Item 2 -->
+                            <div class="timeline-item">
+                                <h3 class="h4 mb-4">Our first products</h3>
+                                <div class="my-3">
+                                    <span class="icon icon-sm icon-purple me-2"><span
+                                            class="fab fa-bootstrap"></span></span>
+                                    <span class="icon icon-sm icon-info me-2"><span class="fab fa-react"></span></span>
+                                    <span class="icon icon-sm icon-success me-2"><span
+                                            class="fab fa-vuejs"></span></span>
+                                    <span class="icon icon-sm icon-danger"><span class="fab fa-angular"></span></span>
+                                </div>
+                                <p>Bootstrap. Build responsive, mobile-first projects on the web with the world's most
+                                    popular front-end component library. Bootstrap is an open source toolkit for
+                                    developing with HTML, CSS, and JS. Quickly prototype your
+                                    ideas.
+                                </p>
+                            </div>
+                            <!-- Timeline Item 3 -->
+                            <div class="timeline-item">
+                                <h3 class="h4 mb-4">Our office</h3>
+                                <img class="mt-2" src="/static/assets/img/office.png" alt="Themesberg workspace"
+                                     width="300">
+                                <p>AngularJS is a JavaScript-based open-source front-end web application framework
+                                    mainly maintained by Google and by a community of individuals and corporations to
+                                    address many of the challenges encountered in developing
+                                    single-page applications.
+                                </p>
+                            </div>
+                            <!-- Timeline Item 4 -->
+                            <div class="timeline-item">
+                                <h3 class="h4 mb-4">An ideea becomes a business</h3>
+                                <p>AngularJS is a JavaScript-based open-source front-end web application framework
+                                    mainly maintained by Google and by a community of individuals and corporations to
+                                    address many of the challenges encountered in developing
+                                    single-page applications.
+                                </p>
+                                <img class="mt-2" src="/static/assets/img/signature.svg" alt="signature" width="100">
                             </div>
                         </div>
-                        <!-- End of Contact Card -->
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- End of section -->
+        </div>
+        <figure class="position-absolute bottom-0 left-0 w-100 d-none d-md-block mb-n2">
+            <svg class="fill-white" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1920 43.4"
+                 style="enable-background:new 0 0 1920 43.4;" xml:space="preserve">
+                   <path d="M0,23.3c0,0,405.1-43.5,697.6,0c316.5,1.5,108.9-2.6,480.4-14.1c0,0,139-12.2,458.7,14.3 c0,0,67.8,19.2,283.3-22.7v35.1H0V23.3z"></path>
+                </svg>
+        </figure>
+    </section>
 
-    </main>
+    <!-- Section -->
+    <section class="section section-lg">
+        <div class="container">
+            <div class="row mb-5 mb-lg-6">
+                <div class="col-12 col-md-9 col-lg-8 text-center mx-auto">
+                    <h2 class="h1 mb-4">Funny &amp; Creative Team</h2>
+                    <p class="lead">We have developed a multi-discipline portfolio as a digital marketing agency, we
+                        also have roots in print media and even photography.
+                    </p>
+                </div>
+            </div>
+            <div class="row mb-5 mb-lg-6">
+                <div class="col-12 col-md-6 col-lg-4 mb-5 mb-lg-0">
+                    <div class="card shadow border-gray-300">
+                        <img src="/static/assets/img/team/profile-picture-1.jpg" class="card-img-top rounded-top"
+                             alt="Joseph Portrait">
+                        <div class="card-body">
+                            <h3 class="h4 card-title mb-2">Joseph Garth</h3>
+                            <span class="card-subtitle text-gray fw-normal">Co-Founder</span>
+                            <p class="card-text my-3">Some quick example text to build on the card title and make up the
+                                bulk of the card's content.</p>
+                            <ul class="list-unstyled d-flex mt-3 mb-0">
+                                <li>
+                                    <a href="#" target="_blank" aria-label="facebook social link"
+                                       class="icon-facebook me-3">
+                                        <span class="fab fa-facebook-f"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="twitter social link"
+                                       class="icon-twitter me-3">
+                                        <span class="fab fa-twitter"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="slack social link" class="icon-slack me-3">
+                                        <span class="fab fa-slack-hash"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="dribbble social link"
+                                       class="icon-dribbble me-3">
+                                        <span class="fab fa-dribbble"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 mb-5 mb-lg-0">
+                    <div class="card shadow border-gray-300">
+                        <img src="/static/assets/img/team/profile-picture-3.jpg" class="card-img-top rounded-top"
+                             alt="Bonnie portrait">
+                        <div class="card-body">
+                            <h3 class="h4 card-title mb-2">Bonnie Green</h3>
+                            <span class="card-subtitle text-gray fw-normal">Web Developer</span>
+                            <p class="card-text my-3">Some quick example text to build on the card title and make up the
+                                bulk of the card's content.</p>
+                            <ul class="list-unstyled d-flex mt-3 mb-0">
+                                <li>
+                                    <a href="#" target="_blank" aria-label="facebook social link"
+                                       class="icon-facebook me-3">
+                                        <span class="fab fa-facebook-f"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="twitter social link"
+                                       class="icon-twitter me-3">
+                                        <span class="fab fa-twitter"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="slack social link" class="icon-slack me-3">
+                                        <span class="fab fa-slack-hash"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="dribbble social link"
+                                       class="icon-dribbble me-3">
+                                        <span class="fab fa-dribbble"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow border-gray-300">
+                        <img src="/static/assets/img/team/profile-picture-4.jpg" class="card-img-top rounded-top"
+                             alt="Jose Avatar">
+                        <div class="card-body">
+                            <h3 class="h4 card-title mb-2">Jose Leos</h3>
+                            <span class="card-subtitle text-gray fw-normal">Web publications designer</span>
+                            <p class="card-text my-3">Some quick example text to build on the card title and make up the
+                                bulk of the card's content.</p>
+                            <ul class="list-unstyled d-flex mt-3 mb-0">
+                                <li>
+                                    <a href="#" target="_blank" aria-label="facebook social link"
+                                       class="icon-facebook me-3">
+                                        <span class="fab fa-facebook-f"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="twitter social link"
+                                       class="icon-twitter me-3">
+                                        <span class="fab fa-twitter"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="slack social link" class="icon-slack me-3">
+                                        <span class="fab fa-slack-hash"></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" target="_blank" aria-label="dribbble social link"
+                                       class="icon-dribbble me-3">
+                                        <span class="fab fa-dribbble"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <!-- Contact Card -->
+                    <div class="card border-0 p-2 p-md-3 p-lg-5">
+                        <div class="card-header bg-white border-0 text-center">
+                            <h2>Want to work with us?</h2>
+                            <p>Cool! Let’s talk about your project</p>
+                        </div>
+                        <div class="card-body pt-0">
 
-    <section class="section py-0">
-        <div class="container z-2">
+                        </div>
+                    </div>
+                    <!-- End of Contact Card -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End of section -->
+
+</main>
+
+<section class="section py-0">
+    <div class="container z-2">
         <div class="row position-relative justify-content-center align-items-cente">
             <div class="col-12">
                 <!-- Card -->
@@ -446,7 +600,8 @@
                             <div class="col-md-6">
                                 <h2 class="h1 mb-3">Become one of us</h2>
                                 <p class="lead mb-4">
-                                    Do you want to join our team and work remotely from anywhere you’d like? We can’t wait to hear from you!
+                                    Do you want to join our team and work remotely from anywhere you’d like? We can’t
+                                    wait to hear from you!
                                 </p>
                                 <a href="#" class="btn btn-primary">
                                     <span class="me-1">
@@ -463,10 +618,10 @@
                 </div>
             </div>
         </div>
-        </div>
-    </section>
+    </div>
+</section>
 
-    {% include 'includes/footer-about.html' %}
+{% include 'includes/footer-about.html' %}
 
 {% endblock content %}
 
