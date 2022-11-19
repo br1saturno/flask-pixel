@@ -38,7 +38,7 @@ class ProductionConfig(Config):
     #     os.getenv('DB_NAME'     , 'hues-generated')
     # )
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://br1:vacabutterfly@localhost:5432/hues-generated'.format(
+    SQLALCHEMY_DATABASE_URI = 'postgresql://hues-generated:AVNS_BulNeWAQz86gTToiC9K@app-ad45a6f8-50b3-4ca1-aa0d-5be49f192c73-do-user-12868344-0.b.db.ondigitalocean.com:25060/hues-generated'.format(
         os.getenv('DB_ENGINE'   , 'mysql'),
         os.getenv('DB_USERNAME' , 'hues-generated'),
         os.getenv('DB_PASS'     , 'AVNS_BulNeWAQz86gTToiC9K'),

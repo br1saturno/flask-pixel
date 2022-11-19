@@ -8,6 +8,7 @@ from flask import Flask, flash, render_template, request, redirect, session, url
 from werkzeug.utils import secure_filename
 from apps import db
 from PIL import Image
+from datetime import datetime
 
 from apps.studio.models import AImages
 from apps.studio.forms import StudioForm, styles, color_moods, room_types, color_moods_dict, aspect_ratio, aspect_ratio_low
@@ -152,14 +153,18 @@ def generate_image(var=0, variation_image_id='none'):
                 image_params[ "width" ] = resized_image.size[0]
                 image_params[ "height" ] = resized_image.size[1]
 
+            time_before = datetime.now()
             # Generates the new image
             stability_generation(session_id, my_prompt, base_image, wanted_samples, image_name, height, width, var=False,
                                  scratch=scratch)
+            time_after = datetime.now()
         else:
             # Generates variation of an image
+            time_before = datetime.now()
             variation(variation_image_id, username)
             image_params[ "width" ] = Image.open(f"apps/static/{db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]}").size[0]
             image_params[ "height" ] = Image.open(f"apps/static/{db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]}").size[1]
+            time_after = datetime.now()
 
         # Loads sessions and images to display
         showed_images_dict = content_loader(5, username)
