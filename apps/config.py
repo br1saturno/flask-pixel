@@ -33,8 +33,11 @@ class ProductionConfig(Config):
         os.getenv('DB_ENGINE'   , 'mysql'),
         os.getenv('DB_USERNAME' , 'br1'),
         os.getenv('DB_PASS'     , 'vacabutterfly'),
-        os.getenv('DB_HOST'     , '0.0.0.0'),
-        os.getenv('DB_PORT'     , 8080),
+        # Change to this to deploy:
+        # os.getenv('DB_HOST', '0.0.0.0'),
+        # os.getenv('DB_PORT', 8080),
+        os.getenv('DB_HOST'     , 'localhost'),
+        os.getenv('DB_PORT'     , 5432),
         os.getenv('DB_NAME'     , 'hues-generated')
     ) 
 
