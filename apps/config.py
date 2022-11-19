@@ -29,14 +29,25 @@ class ProductionConfig(Config):
     REMEMBER_COOKIE_DURATION = 3600
 
     # PostgreSQL database
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://br1:vacabutterfly@localhost:5432/hues-generated'.format(
+    #     os.getenv('DB_ENGINE'   , 'mysql'),
+    #     os.getenv('DB_USERNAME' , 'br1'),
+    #     os.getenv('DB_PASS'     , 'vacabutterfly'),
+    #     os.getenv('DB_HOST'     , 'localhost'),
+    #     os.getenv('DB_PORT'     , 5432),
+    #     os.getenv('DB_NAME'     , 'hues-generated')
+    # )
+
     SQLALCHEMY_DATABASE_URI = 'postgresql://br1:vacabutterfly@localhost:5432/hues-generated'.format(
         os.getenv('DB_ENGINE'   , 'mysql'),
-        os.getenv('DB_USERNAME' , 'br1'),
-        os.getenv('DB_PASS'     , 'vacabutterfly'),
-        os.getenv('DB_HOST'     , 'localhost'),
-        os.getenv('DB_PORT'     , 5432),
-        os.getenv('DB_NAME'     , 'hues-generated')
-    ) 
+        os.getenv('DB_USERNAME' , 'hues-generated'),
+        os.getenv('DB_PASS'     , 'AVNS_BulNeWAQz86gTToiC9K'),
+        os.getenv('DB_HOST'     , 'app-ad45a6f8-50b3-4ca1-aa0d-5be49f192c73-do-user-12868344-0.b.db.ondigitalocean.com'),
+        os.getenv('DB_PORT'     , 25060),
+        os.getenv('DB_NAME'     , 'hues-generated'),
+        os.getenv('DB_SSLMODE'  , 'require')
+    )
+
 
 class DebugConfig(Config):
     DEBUG = True
