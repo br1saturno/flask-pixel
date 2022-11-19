@@ -29,13 +29,13 @@ class ProductionConfig(Config):
     REMEMBER_COOKIE_DURATION = 3600
 
     # PostgreSQL database
-    SQLALCHEMY_DATABASE_URI = '{}://{}:{}@{}:{}/{}'.format(
+    SQLALCHEMY_DATABASE_URI = 'postgresql://br1:vacabutterfly@localhost:5432/hues-generated'.format(
         os.getenv('DB_ENGINE'   , 'mysql'),
-        os.getenv('DB_USERNAME' , 'appseed_db_usr'),
-        os.getenv('DB_PASS'     , 'pass'),
+        os.getenv('DB_USERNAME' , 'br1'),
+        os.getenv('DB_PASS'     , 'vacabutterfly'),
         os.getenv('DB_HOST'     , 'localhost'),
-        os.getenv('DB_PORT'     , 3306),
-        os.getenv('DB_NAME'     , 'appseed_db')
+        os.getenv('DB_PORT'     , 5432),
+        os.getenv('DB_NAME'     , 'hues-generated')
     ) 
 
 class DebugConfig(Config):

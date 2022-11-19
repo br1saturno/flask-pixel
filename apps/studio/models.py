@@ -13,3 +13,17 @@ class AImages(db.Model):
     image_name = db.Column(db.String(250), nullable=False)
     gen_image = db.Column(db.String(250), unique=True, nullable=False)
     base_image = db.Column(db.String(250), nullable=True)
+    style = db.Column(db.String(250), nullable=True)
+    room_type = db.Column(db.String(250), nullable=True)
+    color_mood = db.Column(db.String(250), nullable=True)
+    light_mood = db.Column(db.String(250), nullable=True)
+    materials = db.Column(db.String(250), nullable=True)
+    variant = db.Column(db.Boolean, nullable=False)
+    bookmark = db.Column(db.Boolean, default=False, nullable=False)
+    collection = db.Column(db.String(250), nullable=True)
+    ratio = db.Column(db.String(250), nullable=True)
+    date_time = db.Column(db.DateTime, nullable=False)
+    quality = db.Column(db.String(250), nullable=True)
+
+
+

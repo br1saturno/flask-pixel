@@ -68,11 +68,22 @@
 </head>
 <body>
 
-<!--    {% include 'includes/vertical-navigation.html' %}-->
+<div>
 
-<!--    {% include 'includes/navigation.html' %}-->
+    {% include 'includes/sidebar.html' %}
 
-    {% block content %}{% endblock content %}
+
+    <div class="page-container">
+
+        <!--    {% include 'includes/vertical-navigation.html' %}-->
+        <!--    {% include 'includes/navigation.html' %}-->
+
+        {% block content %}{% endblock content %}
+
+    </div>
+
+</div>
+
 
     {% include 'includes/scripts.html' %}
 

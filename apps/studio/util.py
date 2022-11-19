@@ -1,6 +1,7 @@
-import os
+import getpass, os
 import io
 import warnings
+from datetime import datetime
 from apps import db
 from apps.studio.models import AImages
 from flask import request
@@ -15,11 +16,21 @@ from PIL import Image # image processing
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 
+os.environ['STABILITY_HOST'] = 'grpc.stability.ai:443'
+
 stability_api = client.StabilityInference(key=os.environ['STABILITY_KEY'], verbose=True, )
 
-variation_params = {
+image_params = {
     "prompt": "",
     "session": 0,
+    "style": "",
+    "room": "",
+    "colors": "",
+    "light": "",
+    "material": "",
+    "ratio": "",
+    "gen_time": [],
+    "quality": "",
     "width": 512,
     "height": 512,
     "image_details": "",
@@ -27,8 +38,9 @@ variation_params = {
 }
 
 
-def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, height, width, var: bool, scratch: bool):
+def stability_generation(session_id, my_prompt, base_image_url, wanted_samples, image_name, height, width, var: bool, scratch: bool):
     """ The var parameter is False for a new session and True for variations in the same session """
+    image_params["datetime"] = datetime.now()
     username = None
     if current_user.is_authenticated:
         user_id = current_user.get_id()
@@ -84,16 +96,16 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
         )
 
     # Loads the session number so it knows which images to load
-    session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
-    if not var and len(session_id_list) > 0:
-        session_id = max(session_id_list) + 1
-    elif var and len(session_id_list) > 0:
-        session_id = max(session_id_list)
-    else:
-        session_id = 1
+    # session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
+    # if not var and len(session_id_list) > 0:
+    #     session_id = max(session_id_list) + 1
+    # elif var and len(session_id_list) > 0:
+    #     session_id = max(session_id_list)
+    # else:
+    #     session_id = 1
 
     # Indicates the session in which the variations will be made
-    variation_params["session"] = session_id
+    image_params["session"] = session_id
 
     n = 1  # Image counter for each sample
 
@@ -112,21 +124,30 @@ def stability_generation(my_prompt, base_image_url, wanted_samples, image_name, 
                 # db.session.commit()
                 image_png = f"assets/img/generated/{image_name}{n}.png"
                 # generated_images.append(f"{image_name}{n}.png")
-
                 img.save(f"apps/static/{image_png}")
                 # Saves the image to the database
+                style = image_params["style"]
+                room_type = image_params[ "room" ]
+                color_mood = image_params[ "colors" ]
+                light_mood = image_params[ "light" ]
+                materials = image_params[ "material" ]
+                ratio = image_params[ "ratio" ]
+                gen_time = image_params[ "datetime" ]
+                quality = image_params[ "quality" ]
                 new_image = AImages(session_id=session_id, username=username, prompt=my_prompt, image_name=image_name,
-                                    gen_image=image_png, base_image=base_image_url)
+                                    gen_image=image_png, base_image=base_image_url, style=style, room_type=room_type,
+                                    color_mood=color_mood, light_mood=light_mood, materials=materials, variant=var,
+                                    bookmark=False, collection="", ratio=ratio, date_time=gen_time, quality=quality)
                 db.session.add(new_image)
                 db.session.commit()
                 gen_list = [d[0] for d in db.session.query(AImages.gen_image).filter_by(username=username, session_id=session_id).all()]
                 print(gen_list)
                 n += 1
-                if not var:
-                    variation_params[f"{n}"] = []
-
-    if not var:
-        variation_params["originals"] = n
+    #             if not var:
+    #                 image_params[ f"{n}" ] = []
+    #
+    # if not var:
+    #     image_params[ "originals" ] = n
 
 
 def resize_image(user_image, base_image):
@@ -192,24 +213,56 @@ def resize_image(user_image, base_image):
             cropped_image.save(f"apps/static/assets/img/bases/{base_image}")
 
 
-def variation(variation_image, username, session_id):
-    print(username, session_id)
-    base_image = variation_image.split('/')[3]
+def variation(variation_image_id, username):
+    image_to_variate = db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]
+    session_id = db.session.query(AImages.session_id).filter_by(id=variation_image_id).all()[0][0]
+    base_image = image_to_variate.split('/')[3]
+    print(f"ID: {variation_image_id} | Correspond to: {base_image}")
+    image_size = Image.open(f"apps/static/{image_to_variate}").size
     generated_images = [d[0] for d in db.session.query(AImages.gen_image).filter_by(username=username, session_id=session_id).all()]
-    print(generated_images)
-    img_index = generated_images.index(variation_image)
-    if f"{img_index + 1}" in variation_params:
-        if len(variation_params[f"{img_index + 1}"]) == 0:
-            variation_number = 1
-            variation_params[f"{img_index + 1}"].append(variation_number)
-        else:
-            variation_number = len(variation_params[f"{img_index + 1}"]) + 1
-            variation_params[f"{img_index + 1}"].append(variation_number)
+    n = 1
+    new_name = f"{base_image.split('.')[0]}-{n}.png"
+    while new_name in generated_images:
+        n += 1
+        new_name = f"{base_image.split('.')[0]}-{n}.png"
+    new_name = new_name.split(".")[0]
+    print(f"Variation name: {new_name}")
+    variation_prompt = db.session.query(AImages.prompt).filter_by(id=variation_image_id).all()[0][0]
+    variation_height = image_size[1]
+    variation_width = image_size[0]
+    image_params[ "prompt" ] = db.session.query(AImages.prompt).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+    image_params[ "style" ] = db.session.query(AImages.style).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+    image_params[ "room" ] = db.session.query(AImages.room_type).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+    image_params[ "colors" ] = db.session.query(AImages.color_mood).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+    image_params[ "light" ] = db.session.query(AImages.light_mood).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+    image_params[ "material" ] = db.session.query(AImages.materials).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+    image_params[ "quality" ] = db.session.query(AImages.quality).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+    image_params[ "ratio" ] = db.session.query(AImages.ratio).filter_by(id=variation_image_id).all()[ 0 ][ 0 ]
+
+    stability_generation(session_id, variation_prompt, base_image, 1, new_name, variation_height, variation_width, True, False)
+
+
+def content_loader(number_of_sessions, username):
+    showed_images_dict = {}
+    session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
+    session_id = max(session_id_list)
+
+    session_images = db.session.query(AImages).filter_by(session_id=session_id).filter_by(username=username).all()
+
+    sessions_to_load = number_of_sessions
+    all_sessions = db.session.query(AImages.session_id.distinct()).filter_by(username=username).all()
+    all_sessions_list = [d[0] for d in all_sessions]
+    if len(all_sessions_list) > sessions_to_load:
+        for s in range(session_id - (sessions_to_load - 1), session_id + 1):
+            showed_images = db.session.query(AImages.id, AImages.gen_image).filter_by(session_id=s).filter_by(
+                username=username).all()
+            showed_images_dict[s] = [d for d in showed_images]
+            showed_sessions = all_sessions_list[-sessions_to_load:]
     else:
-        variation_params[f"{img_index + 1}"] = []
-        variation_number = 1
-        variation_params[f"{img_index + 1}"].append(variation_number)
-    new_name = f"{base_image.split('.')[ 0 ]}-{variation_number}"
-
-    stability_generation(variation_params["prompt"], base_image, 1, new_name, variation_params["height"], variation_params["width"], True, False)
-
+        for s in range(1, session_id + 1):
+            showed_images = db.session.query(AImages.id, AImages.gen_image).filter_by(session_id=s).filter_by(
+                username=username).all()
+            print(showed_images)
+            showed_images_dict[s] = [d for d in showed_images]
+            showed_sessions = all_sessions_list
+    return showed_images_dict

@@ -11,7 +11,7 @@ from PIL import Image
 
 from apps.studio.models import AImages
 from apps.studio.forms import StudioForm, styles, color_moods, room_types, color_moods_dict, aspect_ratio, aspect_ratio_low
-from apps.studio.util import stability_generation, variation_params, resize_image, variation
+from apps.studio.util import stability_generation, image_params, resize_image, variation, content_loader
 from apps.authentication.models import Users
 from flask_login import login_required
 from flask_login import (
@@ -37,15 +37,15 @@ def allowed_file(filename):
 
 
 @blueprint.route('/studio', methods=['GET', 'POST'])
-@blueprint.route('/studio/<int:var>/<variation_image>', methods=['GET', 'POST'])
+@blueprint.route('/studio/<int:var>/<variation_image_id>', methods=['GET', 'POST'])
 @login_required
-def generate_image(var=0, variation_image='none'):
+def generate_image(var=0, variation_image_id='none'):
     username = None
-
     if current_user.is_authenticated:
         user_id = current_user.get_id()
         username = str(Users.query.filter_by(id=user_id).first())
 
+    showed_images_dict = content_loader(5, username)
     scratch = False
     wanted_samples = 1
     room_input = ""
@@ -60,6 +60,8 @@ def generate_image(var=0, variation_image='none'):
     base_image = ''
     my_prompt = ''
     session_id = 0
+    session_images = []
+    showed_sessions = []
 
     # Loads the values for the stability ai function
     if request.method == "POST":
@@ -125,39 +127,47 @@ def generate_image(var=0, variation_image='none'):
 
             resize_image(user_image, base_image)
 
-            # This string goes in the info popover of the results section
-            images_details = f"{room_input}, {style_input} style, {color_input} color accents. Aspect ratio {ratio_input}. - Click again to dismiss -"
-            variation_params["image_details"] = images_details
-            variation_params["prompt"] = my_prompt
+            # NOT USING IT AT THE MOMENT // This string goes in the info popover of the results section
+            # images_details = f"{room_input}, {style_input} style, {color_input} color accents. Aspect ratio {ratio_input}. - Click again to dismiss -"
 
+            # Parameters for the database
+            # image_params[ "image_details" ] = images_details
+            image_params[ "prompt" ] = my_prompt
+            image_params[ "style" ] = request.form[ 'style' ]
+            image_params[ "room" ] = request.form[ 'room' ]
+            image_params[ "colors" ] = request.form[ 'color_mood' ]
+            image_params[ "light" ] = ""
+            image_params[ "material" ] = ""
+            image_params[ "quality" ] = ""
+            if scratch:
+                image_params[ "ratio" ] = request.form[ 'ratio' ]
+            else:
+                image_params["ratio"] = "original"
             if request.form.get("scratch"):
                 scratch = True
-                variation_params["width"] = aspect_ratio_low[request.form["ratio"]][0]
-                variation_params["height"] = aspect_ratio_low[request.form["ratio"]][1]
+                image_params[ "width" ] = aspect_ratio_low[request.form[ "ratio" ] ][0]
+                image_params[ "height" ] = aspect_ratio_low[request.form[ "ratio" ] ][1]
             else:
                 resized_image = Image.open(f"apps/static/assets/img/bases/{base_image}")
-                variation_params["width"] = resized_image.size[0]
-                variation_params["height"] = resized_image.size[1]
+                image_params[ "width" ] = resized_image.size[0]
+                image_params[ "height" ] = resized_image.size[1]
 
             # Generates the new image
-            stability_generation(my_prompt, base_image, wanted_samples, image_name, height, width, var=False,
+            stability_generation(session_id, my_prompt, base_image, wanted_samples, image_name, height, width, var=False,
                                  scratch=scratch)
         else:
-            session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
-            session_id = max(session_id_list)
-            print(username, session_id)
-            generated_images = [d[0] for d in db.session.query(AImages.gen_image).filter_by(username=username, session_id=session_id).all()]
-            print(generated_images)
-            image_to_variate = generated_images[int(variation_image) - 1]
-            print(image_to_variate)
-            variation(image_to_variate, username, session_id)
-            images_details = variation_params["image_details"]
+            # Generates variation of an image
+            variation(variation_image_id, username)
+            image_params[ "width" ] = Image.open(f"apps/static/{db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]}").size[0]
+            image_params[ "height" ] = Image.open(f"apps/static/{db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]}").size[1]
 
-        session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
-        session_id = max(session_id_list)
-        print(session_id)
-    all_images = db.session.query(AImages).filter_by(session_id=session_id).filter_by(username=username).all()
-    return render_template('home/studio.html', images=all_images, session_id=session_id, styles=styles,
+        # Loads sessions and images to display
+        showed_images_dict = content_loader(5, username)
+
+        print(f"This: {showed_images_dict}")
+
+    return render_template('home/studio.html', images=session_images, showed_images=showed_images_dict,
+                           session_list=showed_sessions, session_id=session_id, styles=styles,
                            moods=color_moods, rooms=room_types, samples=wanted_samples, details=images_details)
 
 
