@@ -48,6 +48,9 @@ class ProductionConfig(Config):
         os.getenv('DB_SSLMODE'  , 'require')
     )
 
+    ssl_mode = "?sslmode=require"
+    SQLALCHEMY_DATABASE_URI += ssl_mode
+
 
 class DebugConfig(Config):
     DEBUG = True

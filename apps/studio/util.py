@@ -162,11 +162,11 @@ def resize_image(user_image, base_image):
             horizontal = True
             for n in reversed(range(1, 9)):
                 if image_to_resize.size[ 0 ] < 512:
-                    new_image = image_to_resize.resize(512, 512 / image_ratio)
+                    new_image = image_to_resize.resize((512, int(512 / image_ratio)))
                     proportion = 1
                     new_image.save(f"apps/static/assets/img/bases/{base_image}")
                 elif image_to_resize.size[ 0 ] > 1024:
-                    new_image = image_to_resize.resize(1024, 1024 / image_ratio)
+                    new_image = image_to_resize.resize((1024, int(1024 / image_ratio)))
                     proportion = 8
                     new_image.save(f"apps/static/assets/img/bases/{base_image}")
                 elif (512 + (n - 1) * 64) < image_to_resize.size[ 0 ] <= (512 + n * 64):
@@ -179,16 +179,16 @@ def resize_image(user_image, base_image):
             image_ratio = image_to_resize.size[ 1 ] / image_to_resize.size[ 0 ]
             for n in reversed(range(1, 9)):
                 if image_to_resize.size[ 1 ] < 512:
-                    new_image = image_to_resize.resize(512 / image_ratio, 512)
+                    new_image = image_to_resize.resize((int(512 / image_ratio), 512))
                     proportion = 1
                     new_image.save(f"apps/static/assets/img/bases/{base_image}")
                 elif image_to_resize.size[ 1 ] > 1024:
-                    new_image = image_to_resize.resize(1024 / image_ratio, 1024)
+                    new_image = image_to_resize.resize(int((1024 / image_ratio), 1024))
                     proportion = 8
                     new_image.save(f"apps/static/assets/img/bases/{base_image}")
                 elif (512 + (n - 1) * 64) < image_to_resize.size[ 0 ] <= (512 + n * 64):
                     new_height = 512 + n * 64
-                    new_width = new_height / image_ratio
+                    new_width = int(new_height / image_ratio)
                     new_image = image_to_resize.resize((new_width, new_height))
                     proportion = n
                     new_image.save(f"apps/static/assets/img/bases/{base_image}")
