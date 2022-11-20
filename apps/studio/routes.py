@@ -46,7 +46,9 @@ def generate_image(var=0, variation_image_id='none'):
         user_id = current_user.get_id()
         username = str(Users.query.filter_by(id=user_id).first())
 
-    showed_images_dict = content_loader(5, username)
+    session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
+    if len(session_id_list) > 0:
+        showed_images_dict = content_loader(5, username)
     scratch = False
     wanted_samples = 1
     room_input = ""
