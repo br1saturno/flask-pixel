@@ -46,10 +46,4 @@ aspect_ratio_low = {
 }
 
 
-class StudioForm(FlaskForm):
-    style = SelectField(u'Style', choices=styles, id='style', validators=[DataRequired()])
-    color_mood = SelectField(u'Color feel', choices=color_moods, id='color_feel', validators=[DataRequired()])
-    room_type = SelectField(u'Type of room', choices=room_types, id='room_type', validators=[DataRequired()])
-    samples = IntegerRangeField(u'Number of samples')
-    submit = SubmitField(label='Render')
 

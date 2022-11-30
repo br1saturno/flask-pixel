@@ -58,27 +58,31 @@
 
 <!-- Fontawesome -->
 <link type="text/css" href="/static/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<script src="https://kit.fontawesome.com/24709a8e95.js" crossorigin="anonymous"></script>
 
 <!-- Pixel CSS -->
 <link type="text/css" href="/static/assets/css/pixel.css" rel="stylesheet">
+
 
 <!-- Specific Page JS goes HERE  -->    
 {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
-<body>
+<body class="app">
 
 <div>
 
     {% include 'includes/sidebar.html' %}
 
+    {% include 'home/modal.html' %}
 
     <div class="page-container">
 
-        <!--    {% include 'includes/vertical-navigation.html' %}-->
-        <!--    {% include 'includes/navigation.html' %}-->
+        {% include 'includes/navigation.html' %}
 
         {% block content %}{% endblock content %}
+
+        {% include 'includes/footer-about.html' %}
 
     </div>
 

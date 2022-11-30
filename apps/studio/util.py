@@ -18,7 +18,11 @@ import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 
 os.environ['STABILITY_HOST'] = 'grpc.stability.ai:443'
 
-stability_api = client.StabilityInference(key=os.environ['STABILITY_KEY'], verbose=True, )
+stability_api = client.StabilityInference(
+    key=os.environ['STABILITY_KEY'],
+    verbose=True,
+    engine="stable-diffusion-768-v2-0",
+)
 
 image_params = {
     "prompt": "",
@@ -57,6 +61,7 @@ def stability_generation(session_id, my_prompt, base_image_url, wanted_samples, 
             samples=wanted_samples,
             height=height,
             width=width,
+            guidance_strength=0.25,
             # steps=100,
             # cfg_scale=7.0,
             # seed=2895508001,
@@ -73,6 +78,7 @@ def stability_generation(session_id, my_prompt, base_image_url, wanted_samples, 
             samples=wanted_samples,
             # height=height,
             # width=width,
+            guidance_strength=0.25,
             # steps=50,
             # cfg_scale=7.0,
             # seed=2895508001,
@@ -89,6 +95,7 @@ def stability_generation(session_id, my_prompt, base_image_url, wanted_samples, 
             samples=wanted_samples,
             # height=height,
             # width=width,
+            guidance_strength=0.25,
             # steps=50,
             # cfg_scale=7.0,
             # seed=2895508001,
@@ -215,16 +222,17 @@ def resize_image(user_image, base_image):
 
 def variation(variation_image_id, username):
     image_to_variate = db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]
-    session_id = db.session.query(AImages.session_id).filter_by(id=variation_image_id).all()[0][0]
+    all_session_ids = db.session.query(AImages.session_id).filter_by(username=username).all()
+    session_id = max([d[0] for d in all_session_ids]) + 1
     base_image = image_to_variate.split('/')[3]
     print(f"ID: {variation_image_id} | Correspond to: {base_image}")
     image_size = Image.open(f"apps/static/{image_to_variate}").size
     generated_images = [d[0] for d in db.session.query(AImages.gen_image).filter_by(username=username, session_id=session_id).all()]
     n = 1
-    new_name = f"{base_image.split('.')[0]}-{n}.png"
+    new_name = f"{base_image.split('.')[0]}-v{session_id}{n}.png"
     while new_name in generated_images:
         n += 1
-        new_name = f"{base_image.split('.')[0]}-{n}.png"
+        new_name = f"{base_image.split('.')[0]}-v{session_id}{n}.png"
     new_name = new_name.split(".")[0]
     print(f"Variation name: {new_name}")
     variation_prompt = db.session.query(AImages.prompt).filter_by(id=variation_image_id).all()[0][0]
@@ -242,27 +250,44 @@ def variation(variation_image_id, username):
     stability_generation(session_id, variation_prompt, base_image, 1, new_name, variation_height, variation_width, True, False)
 
 
-def content_loader(number_of_sessions, username):
+def content_loader(number_of_sessions, username, page):
+    """ The page parameter is 1 for the Studio and 2 for the Gallery """
     showed_images_dict = {}
+    details_dict = {}
     session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
     session_id = max(session_id_list)
-
-    session_images = db.session.query(AImages).filter_by(session_id=session_id).filter_by(username=username).all()
 
     sessions_to_load = number_of_sessions
     all_sessions = db.session.query(AImages.session_id.distinct()).filter_by(username=username).all()
     all_sessions_list = [d[0] for d in all_sessions]
     if len(all_sessions_list) > sessions_to_load:
         for s in range(session_id - (sessions_to_load - 1), session_id + 1):
-            showed_images = db.session.query(AImages.id, AImages.gen_image).filter_by(session_id=s).filter_by(
+            showed_images = db.session.query(AImages.id, AImages.gen_image, AImages.bookmark).filter_by(session_id=s).filter_by(
                 username=username).all()
+            if page == 1:
+                all_info = db.session.query(AImages).filter_by(session_id=s).filter_by(
+                    username=username).all()
+                details_dict[s] = f"A sample {all_info[0].prompt.split('.')[1].lower()}."
             showed_images_dict[s] = [d for d in showed_images]
             showed_sessions = all_sessions_list[-sessions_to_load:]
     else:
         for s in range(1, session_id + 1):
-            showed_images = db.session.query(AImages.id, AImages.gen_image).filter_by(session_id=s).filter_by(
+            showed_images = db.session.query(AImages.id, AImages.gen_image, AImages.bookmark).filter_by(session_id=s).filter_by(
                 username=username).all()
-            print(showed_images)
+            if page == 1:
+                all_info = db.session.query(AImages).filter_by(session_id=s).filter_by(username=username).all()
+                details_dict[s] = f"A sample {all_info[0].prompt.split('.')[1].lower()}. Aspect ratio: {all_info[0].ratio}."
             showed_images_dict[s] = [d for d in showed_images]
             showed_sessions = all_sessions_list
-    return showed_images_dict
+    return [showed_images_dict, details_dict]
+
+
+def bookmark(image_id):
+    image_to_bookmark = db.session.query(AImages).get(image_id)
+    if not image_to_bookmark.bookmark:
+        image_to_bookmark.bookmark = True
+        db.session.commit()
+    else:
+        image_to_bookmark.bookmark = False
+        db.session.commit()
+

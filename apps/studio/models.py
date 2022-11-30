@@ -26,4 +26,12 @@ class AImages(db.Model):
     quality = db.Column(db.String(250), nullable=True)
 
 
+class Collects(db.Model):
+
+    __tablename__ = "collections"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(250), nullable=False)
+    collection = db.Column(db.String(250), nullable=False)
+    description = db.Column(db.String(1500), nullable=True)
 

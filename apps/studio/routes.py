@@ -8,11 +8,12 @@ from flask import Flask, flash, render_template, request, redirect, session, url
 from werkzeug.utils import secure_filename
 from apps import db
 from PIL import Image
-from datetime import datetime
+from datetime import datetime, timedelta, time
+from flask_modals import Modal
 
 from apps.studio.models import AImages
-from apps.studio.forms import StudioForm, styles, color_moods, room_types, color_moods_dict, aspect_ratio, aspect_ratio_low
-from apps.studio.util import stability_generation, image_params, resize_image, variation, content_loader
+from apps.studio.forms import styles, color_moods, room_types, color_moods_dict, aspect_ratio, aspect_ratio_low
+from apps.studio.util import stability_generation, image_params, resize_image, variation, content_loader, bookmark
 from apps.authentication.models import Users
 from flask_login import login_required
 from flask_login import (
@@ -22,6 +23,7 @@ from jinja2 import TemplateNotFound
 
 app = Flask(__name__)
 app.register_blueprint(blueprint)
+modal = Modal(app)
 
 UPLOAD_FOLDER = 'apps/static/assets/img/bases'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -42,20 +44,30 @@ def allowed_file(filename):
 @login_required
 def generate_image(var=0, variation_image_id='none'):
     username = None
+    user_initial = ""
+    images_details = {}
+    sessions_to_load = 5
     if current_user.is_authenticated:
         user_id = current_user.get_id()
         username = str(Users.query.filter_by(id=user_id).first())
+        user_initial = list(username)[0].title()
+        print(user_initial)
+    image_id = request.args.get('image_id')
+    switch_bookmark = request.args.get('bookmark')
+    if switch_bookmark == '1':
+        bookmark(int(image_id))
     showed_images_dict = {}
     session_id_list = [d[0] for d in db.session.query(AImages.session_id).filter_by(username=username).all()]
     if len(session_id_list) > 0:
-        showed_images_dict = content_loader(5, username)
+        showed_images_dict = content_loader(sessions_to_load, username, 1)[0]
+        print(showed_images_dict)
+        images_details = content_loader(sessions_to_load, username, 1)[1]
     scratch = False
     wanted_samples = 1
     room_input = ""
     style_input = ""
     color_input = ""
     ratio_input = ""
-    images_details = ""
     width = 512
     height = 512
     image_name = ''
@@ -65,6 +77,7 @@ def generate_image(var=0, variation_image_id='none'):
     session_id = 0
     session_images = []
     showed_sessions = []
+    delta = 0
 
     # Loads the values for the stability ai function
     if request.method == "POST":
@@ -78,9 +91,9 @@ def generate_image(var=0, variation_image_id='none'):
             colors = f""
             for color in color_moods_dict[request.form['color_mood']]:
                 if color is color_moods_dict[request.form['color_mood']][0]:
-                    colors = f"{color} accents"
+                    colors = f"{color} color accents"
                 else:
-                    colors += f", {color} accents"
+                    colors += f", {color} color accents"
             for pair in room_types:
                 if request.form['room'] == pair[0]:
                     room_input = pair[1].split("-")[1]
@@ -91,9 +104,9 @@ def generate_image(var=0, variation_image_id='none'):
                 if request.form['color_mood'] == pair[0]:
                     color_input = pair[1]
 
-            my_prompt = f"A realistic photograph of a{room_input}, {colors}, " \
-                        f"{style_input} furniture and {style_input} accesories, 8k, unreal engine, " \
-                        f"highly detailed, octane render, sharp, ambient lighting"
+            my_prompt = f"A realistic photograph. of a{room_input.lower()}, {colors.lower()}," \
+                        f" {style_input.lower()} style furniture and {style_input.lower()} style accesories, " \
+                        f"ambient lighting. 8k, unreal engine, highly detailed, octane render, sharp."
             print(my_prompt)
 
             image_name = f"{username}-{session_id}-{request.form['room']}"
@@ -155,27 +168,62 @@ def generate_image(var=0, variation_image_id='none'):
                 image_params[ "width" ] = resized_image.size[0]
                 image_params[ "height" ] = resized_image.size[1]
 
-            time_before = datetime.now()
+            time_before = datetime.now().time().strftime('%H:%M:%S.%f')
             # Generates the new image
             stability_generation(session_id, my_prompt, base_image, wanted_samples, image_name, height, width, var=False,
                                  scratch=scratch)
-            time_after = datetime.now()
+            time_after = datetime.now().time().strftime('%H:%M:%S.%f')
+            delta = datetime.strptime(time_after, '%H:%M:%S.%f') - datetime.strptime(time_before, '%H:%M:%S.%f')
         else:
             # Generates variation of an image
-            time_before = datetime.now()
+            time_before = datetime.now().time().strftime('%H:%M:%S.%f')
             variation(variation_image_id, username)
             image_params[ "width" ] = Image.open(f"apps/static/{db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]}").size[0]
             image_params[ "height" ] = Image.open(f"apps/static/{db.session.query(AImages.gen_image).filter_by(id=variation_image_id).all()[0][0]}").size[1]
-            time_after = datetime.now()
+            time_after = datetime.now().time().strftime('%H:%M:%S.%f')
+            delta = datetime.strptime(time_after, '%H:%M:%S.%f') - datetime.strptime(time_before, '%H:%M:%S.%f')
 
         # Loads sessions and images to display
-        showed_images_dict = content_loader(5, username)
+        showed_images_dict = content_loader(sessions_to_load, username, 1)[0]
+        images_details = content_loader(sessions_to_load, username, 1)[1]
 
         print(f"This: {showed_images_dict}")
 
     return render_template('home/studio.html', images=session_images, showed_images=showed_images_dict,
                            session_list=showed_sessions, session_id=session_id, styles=styles,
-                           moods=color_moods, rooms=room_types, samples=wanted_samples, details=images_details)
+                           moods=color_moods, rooms=room_types, samples=wanted_samples, details=images_details,
+                           initial=user_initial)
 
 
+@blueprint.route('/gallery', methods=['GET', 'POST'])
+@login_required
+def gallery():
+    username = None
+    all_images = []
+    image_id = request.args.get('image_id')
+    switch_bookmark = request.args.get('bookmark')
+    if switch_bookmark == '1':
+        bookmark(int(image_id))
+    if current_user.is_authenticated:
+        user_id = current_user.get_id()
+        username = str(Users.query.filter_by(id=user_id).first())
+    session_id_list = db.session.query(AImages.session_id.distinct()).filter_by(username=username).all()
+    all_sessions = len(session_id_list)
+    all_images_dict = content_loader(all_sessions, username, 2)[0]
+    for sessions in all_images_dict:
+        for images in all_images_dict[sessions]:
+            all_images.append(images)
+    return render_template('home/gallery.html', images=all_images)
 
+
+@blueprint.route('/bookmark', methods=['GET', 'POST'])
+@login_required
+def bookmarking():
+    image_id = request.args.get('image_id')
+    image_to_bookmark = db.session.query(AImages).get(image_id)
+    if not image_to_bookmark.bookmark:
+        image_to_bookmark.bookmark = True
+        db.session.commit()
+    else:
+        image_to_bookmark.bookmark = False
+        db.session.commit()

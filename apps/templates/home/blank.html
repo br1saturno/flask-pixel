@@ -9,7 +9,7 @@
 
     <main>
         
-        {% include 'includes/preloader.html' %}
+<!--        {% include 'includes/preloader.html' %}-->
 
         <!-- Hero -->
         <section class="section-header">
@@ -17,7 +17,88 @@
                 <div class="row justify-content-center">
                     <div class="col-12 col-md-8 text-center">
                         <h1 class="display-2 mb-3">Blank starter page</h1>
-                        <p>Hello world!</p>
+
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 pb-0">
+                                    <div class="card border-0 overflow-hidden">
+                                        <div class="position-relative">
+                                            <img class="card-img-top card-img-bottom thumb"
+                                                 data-bs-toggle="modal"
+                                                 data-bs-target="#myModal"
+                                                 src="https://picsum.photos/id/237/300/200" id="124img">
+                                        </div>
+                                        <a class="btn-opt btn-sm image-options" data-bs-container="body"
+                                           data-bs-toggle="popover" data-bs-placement="left"
+                                           data-bs-html="true" id="124i">
+                                            <i class="fa-solid fa-ellipsis"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-6 pb-0">
+                                    <div class="card border-0 overflow-hidden">
+                                        <div class="position-relative">
+                                            <img class="card-img-top card-img-bottom thumb" data-bs-toggle="modal"
+                                                 data-bs-target="#myModal"
+                                                 src="https://picsum.photos/id/237/300/200" id="125img">
+                                        </div>
+                                        <a class="btn-opt btn-sm image-options" data-bs-container="body"
+                                           data-bs-toggle="popover" data-bs-placement="left"
+                                           data-bs-html="true" id="125i">
+                                            <i class="fa-solid fa-ellipsis"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <script>
+                                 $(document).ready(function(){
+                                    $('.image-options').each(function() {
+                                        var icon_id = $(this).attr('id');
+                                        icon_id = "#" + icon_id;
+                                        img_id = icon_id + "mg";
+                                        the_url = $(img_id).attr('src');
+
+                                        var popString2 = "";
+                                        popString2 = popString2 + "<a href='" + the_url + "' class='options'>Save image <span class='icon-pop'><i class='fa-regular fa-floppy-disk'></i></span></a>";
+                                        $(icon_id).attr('data-bs-content', popString2);
+
+                                        var popString1 = "";
+                                        popString1 = popString1 + "<a class='options'>Add to collection<span class='icon-pop'><i class='fa-solid fa-plus'></i></span></a>";
+                                        $(icon_id).attr('data-bs-original-title', popString1);
+                                    });
+
+                                });
+
+                                  $(document).ready(function() {
+                                    $('[data-bs-toggle="popover"]').popover('hide');
+                                  });
+
+                                  // Closes the popover when clicking outside
+                                  $(document).on('click', function (e) {
+                                    var
+                                        $popover,
+                                        $target = $(e.target);
+
+                                    //do nothing if there was a click on popover content
+                                    if ($target.hasClass('popover') || $target.closest('.popover').length) {
+                                        return;
+                                    }
+
+                                    $('[data-bs-toggle="popover"]').each(function () {
+                                        $popover = $(this);
+
+                                        if (!$popover.is(e.target) &&
+                                            $popover.has(e.target).length === 0 &&
+                                            $('.popover').has(e.target).length === 0)
+                                        {
+                                            $popover.popover('hide');
+                                        }
+                                    });
+                                })
+
+                            </script>
                     </div>
                 </div>
             </div>
